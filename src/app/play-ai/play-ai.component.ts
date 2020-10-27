@@ -26,7 +26,7 @@ export class PlayAIComponent implements OnInit {
 
   public ngOnInit(): void {
     this.gameSettings = {
-      difficulty: 3,
+      difficulty: 2,
       playerColor: 0,
       secondsToThink: 300,
       secondsIncrement: 0
@@ -34,6 +34,6 @@ export class PlayAIComponent implements OnInit {
   }
 
   public startGame(): void {
-    console.log(this.gameSettings)
+    console.log(this.gameSettings);
   }
 }

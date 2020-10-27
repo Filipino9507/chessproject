@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-page-not-found',
@@ -7,12 +7,5 @@ import { Component, OnInit } from '@angular/core';
     <h4>Click <a routerLink="/home">here</a> to go back to the homepage.</h4>
   `,
   styles: []
-})
-export class PageNotFoundComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+}) 
+export class PageNotFoundComponent { }

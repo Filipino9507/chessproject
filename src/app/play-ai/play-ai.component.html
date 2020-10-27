@@ -1,6 +1,7 @@
 
 <nb-card size="small">
     <nb-card-body class="center-content">
+
         <nb-select placeholder="Select difficulty" [(selected)]="gameSettings.difficulty">
             <nb-option *ngFor="let option of difficultyOptions; let i = index" [value]="i">
                 {{ option }}
@@ -11,22 +12,23 @@
             <nb-option *ngFor="let option of playerColorOptions; let i = index" [value]="i">
                 {{ option }}
             </nb-option>
-        </nb-select>
-        
+        </nb-select><br><br>
+
         <nb-select placeholder="Select timer" [(selected)]="gameSettings.secondsToThink">
             <nb-option *ngFor="let option of secondsToThinkOptions" [value]="option">
                 {{ option / 60 }} {{ option == 60 ? "minute" : "minutes"}}
             </nb-option>
-        </nb-select> 
+        </nb-select>
 
-      <nb-select placeholder="Select increment" [(selected)]="gameSettings.secondsIncrement">
-        <nb-option *ngFor="let option of secondsIncrementOptions; let i = index" [value]="option">
-            {{ option }} seconds
-        </nb-option>
-      </nb-select>
+        <nb-select placeholder="Select increment" [(selected)]="gameSettings.secondsIncrement">
+            <nb-option *ngFor="let option of secondsIncrementOptions; let i = index" [value]="option">
+                {{ option }} seconds
+            </nb-option>
+        </nb-select><br><br>
 
-      <div class="play-button">
-        <button nbButton size="large" status="primary" (click)="startGame()">Play</button>
-      </div>
+        <div class="play-button">
+            <button nbButton size="large" status="primary" (click)="startGame()">Play</button>
+        </div>
+        
     </nb-card-body>
-  </nb-card>
+</nb-card>
