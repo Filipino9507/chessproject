@@ -1,10 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { 
   NbThemeModule, 
   NbLayoutModule,
@@ -16,13 +12,16 @@ import {
   NbSelectModule
 } from '@nebular/theme';
 
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
 import { NbEvaIconsModule } from '@nebular/eva-icons';
-import { PlayAIComponent } from './play-ai/play-ai.component';
-import { OptionsComponent } from './options/options.component';
-import { HomeComponent } from './home/home.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { PlayAIModule } from './play-ai/play-ai.module';
-import { AboutComponent } from './about/about.component';
+import { PlayAIComponent } from './pages/play-ai/play-ai.component';
+import { OptionsComponent } from './pages/options/options.component';
+import { HomeComponent } from './pages/home/home.component';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
+import { PlayAIModule } from './pages/play-ai/play-ai.module';
+import { AboutComponent } from './pages/about/about.component';
 
 @NgModule({
   declarations: [
