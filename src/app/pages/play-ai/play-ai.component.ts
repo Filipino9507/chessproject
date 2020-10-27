@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-interface GameSettings {
-  difficulty?: 0 | 1 | 2 | 3 | 4;
-  playerColor: number;
-  secondsToThink: number;
-  secondsIncrement: number;
-}
+import { IGameSettings } from '@app/shared/models';
 
 @Component({
   selector: 'app-play-menu',
@@ -14,26 +8,18 @@ interface GameSettings {
 })
 export class PlayAIComponent implements OnInit {
 
-  public readonly difficultyOptions = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard'];
-  public readonly playerColorOptions = ['White', 'Black'];
-  public readonly secondsToThinkOptions = [60, 180, 300, 600, 1800];
-  public readonly secondsIncrementOptions = [0, 2, 5, 10, 20];
-
-  private gameOn: boolean;
-  public gameSettings: GameSettings;
+  public gameOn: boolean;
+  public gameSettings: IGameSettings;
   
   public constructor() { }
 
   public ngOnInit(): void {
-    this.gameSettings = {
-      difficulty: 2,
-      playerColor: 0,
-      secondsToThink: 300,
-      secondsIncrement: 0
-    };
+    this.gameOn = false;
   }
 
-  public startGame(): void {
-    console.log(this.gameSettings);
+  public startGame(gameSettings: IGameSettings) {
+    this.gameSettings = gameSettings;
+    this.gameOn = true;
+    console.log(this.gameSettings)
   }
 }

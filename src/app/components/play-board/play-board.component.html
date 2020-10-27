@@ -1,0 +1,9 @@
+<div class="board-container">
+    <div class="board-row" *ngFor="let _ of boardArray; let i = index">
+        <button 
+        *ngFor="let _ of boardArray[i]; let j = index"
+        [class]="'tile ' + (i % 2 == j % 2 ? 'white-tile' : 'black-tile')" >
+        {{ boardArray[i][j] }} 
+        </button>
+    </div>
+</div>

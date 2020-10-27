@@ -16,12 +16,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { PlayAIModule } from './pages/play-ai/play-ai.module';
+import { PlayBoardModule } from './components/play-board/play-board.module';
+
 import { PlayAIComponent } from './pages/play-ai/play-ai.component';
 import { OptionsComponent } from './pages/options/options.component';
 import { HomeComponent } from './pages/home/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { PlayAIModule } from './pages/play-ai/play-ai.module';
 import { AboutComponent } from './pages/about/about.component';
+import { PlayOptionsComponent } from './components/play-options/play-options.component';
+import { PlayBoardComponent } from './components/play-board/play-board.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +35,8 @@ import { AboutComponent } from './pages/about/about.component';
     HomeComponent,
     PageNotFoundComponent,
     AboutComponent,
+    PlayOptionsComponent,
+    PlayBoardComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,7 +51,8 @@ import { AboutComponent } from './pages/about/about.component';
     NbButtonModule,
     NbSelectModule,
     NbEvaIconsModule,
-    PlayAIModule
+    PlayAIModule,
+    PlayBoardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

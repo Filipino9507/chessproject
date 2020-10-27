@@ -1,0 +1,23 @@
+button.tile {
+    width: 75px;
+    height: 75px;
+    border: none;
+}
+.white-tile {
+    background-color: rgb(245, 231, 203);
+}
+.black-tile {
+    background-color: rgb(82, 59, 26);
+}
+
+// div.board-container {
+//     display: grid;
+//     grid-template-columns: 75px 75px 75px 75px 75px 75px 75px 75px;
+//     text-align: left;
+//     justify-content: center;
+//     align-items: center;
+// }
+
+div.board-row {
+    height: 75px;
+}
