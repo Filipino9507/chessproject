@@ -22,12 +22,17 @@ export class PlayBoardComponent implements OnInit {
   public static readonly boardDimen = 8;
 
   public boardArray: Piece[][];
+  public secondsLeft: number;
+  private selectedPiece: Piece;  // NEW
+  private possibleMoves: number[][];  // NEW
+
   @Input() public gameSettings: IGameSettings;
 
   public constructor() { }
 
   public ngOnInit(): void {
     this.initializeBoardArray();
+    this.initializeTimer();
   }
 
   private initializeBoardArray(): void {
@@ -53,4 +58,27 @@ export class PlayBoardComponent implements OnInit {
     }
   }
 
+  public initializeTimer(): void {
+    this.secondsLeft = this.gameSettings.secondsToThink;
+    // Will initialize timer
+    // Timer will be shown in template
+  }
+
+  public selectAPiece(file: number, rank: number): void {
+    // Will select a piece based of the file and rank
+    // Will check if there is a piece, if not, it will unselect the current one
+    // Selected piece stored in this.selectedPiece
+
+    // Checks possible moves using this.isMoveValid
+    // Possible moves stored in this.possibleMoves
+  }
+
+  public isMoveValid(file: number, rank: number): boolean {
+    // Will return if the given destination is valid for selected piece
+    return true;
+  }
+
+  public makeAMove(file: number, rank: number): void {
+    // Will make a move if valid, otherwise keep selected piece / unselect it ??? (decide)
+  }
 }
