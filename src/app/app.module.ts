@@ -21,6 +21,7 @@ import { PlayAIComponent } from './play-ai/play-ai.component';
 import { OptionsComponent } from './options/options.component';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { PlayAIModule } from './play-ai/play-ai.module';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     NbButtonModule,
     NbSelectModule,
     NbEvaIconsModule,
+    PlayAIModule
   ],
   providers: [],
   bootstrap: [AppComponent]
