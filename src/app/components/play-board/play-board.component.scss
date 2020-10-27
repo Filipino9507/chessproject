@@ -1,23 +1,19 @@
+div.board-container {
+    margin: 0 auto;
+}
+div.board-row {
+    height: 75px;
+}
+
 button.tile {
     width: 75px;
     height: 75px;
     border: none;
+    font-size: 70px;
 }
-.white-tile {
-    background-color: rgb(245, 231, 203);
+button.white-tile {
+    background-color: rgb(155, 248, 255);
 }
-.black-tile {
-    background-color: rgb(82, 59, 26);
-}
-
-// div.board-container {
-//     display: grid;
-//     grid-template-columns: 75px 75px 75px 75px 75px 75px 75px 75px;
-//     text-align: left;
-//     justify-content: center;
-//     align-items: center;
-// }
-
-div.board-row {
-    height: 75px;
+button.black-tile {
+    background-color: rgb(28, 115, 150);
 }
