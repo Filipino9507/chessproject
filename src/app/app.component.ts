@@ -38,6 +38,11 @@ export class AppComponent {
       title: 'Options',
       icon: 'settings-2-outline',
       link: '/options'
+    },
+    {
+      title: 'About',
+      icon: 'info-outline',
+      link: '/about'
     }
   ];
 

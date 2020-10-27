@@ -22,6 +22,7 @@ import { OptionsComponent } from './options/options.component';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { PlayAIModule } from './play-ai/play-ai.module';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { PlayAIModule } from './play-ai/play-ai.module';
     PlayAIComponent,
     HomeComponent,
     PageNotFoundComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,
