@@ -3,7 +3,8 @@
     <div class="board-container">
         <div class="board-row" *ngFor="let _ of boardArray; let i = index">
 
-            <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span>
+            <!-- TO BE REFACTORED FROM WITHIN .TS FILE -->
+            <!-- <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span> -->
             
             <button 
             *ngFor="let _ of boardArray[i]; let j = index"

@@ -2,14 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IGameSettings, ITileArrayCoordinates, ITileGameCoordinates } from '@app/shared/models';
 
 import { 
-  Piece,
-  PieceColor,
-  Pawn,
-  Knight,
-  Bishop,
-  Rook,
-  Queen,
-  King
+  Piece, PieceColor, MoveType,
+  Pawn, Knight, Bishop, Rook, Queen, King
 } from '@app/shared/piece';
 
 @Component({
@@ -27,7 +21,7 @@ export class PlayBoardComponent implements OnInit {
   public secondsLeft: PieceColor[];
   public activePlayer: PieceColor;
 
-  private selectedTile: ITileArrayCoordinates;
+  private selectedTileCoordinates: ITileArrayCoordinates;
 
   @Input() public gameSettings: IGameSettings;
 
@@ -35,7 +29,7 @@ export class PlayBoardComponent implements OnInit {
 
   public ngOnInit(): void {
     this.activePlayer = PieceColor.WHITE;
-    this.selectedTile = null;
+    this.selectedTileCoordinates = null;
     this.initializeBoardArray();
     this.initializeTimer();
   }
@@ -76,25 +70,25 @@ export class PlayBoardComponent implements OnInit {
   }
 
   public selectTile(x: number, y: number): void {
-    // console.log(this.boardArray[y][x])
-    if(this.selectedTile == null && this.boardArray[y][x] != null) {
-      this.selectedTile = {x, y};
-    } else if(this.selectedTile != null){
+    const selected = this.boardArray[y][x];
+    if(selected != null && selected.color !== this.activePlayer) {
+      this.selectedTileCoordinates = {x, y};
+    } else if(this.selectedTileCoordinates != null){
       this.makeAMove({x, y});
     }
   }
 
   public makeAMove(toTile: ITileArrayCoordinates): void {
-    const fromTile = this.selectedTile;
+    const fromTile = this.selectedTileCoordinates;
 
     if(this.isMoveValid(fromTile, toTile)) {
       this.boardArray[toTile.y][toTile.x] = this.boardArray[fromTile.y][fromTile.x];
       this.boardArray[fromTile.y][fromTile.x] = null;
-    }
 
-    this.secondsLeft[this.activePlayer] += this.gameSettings.secondsIncrement;
-    this.activePlayer = this.activePlayer === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-    this.selectedTile = null;
+      this.secondsLeft[this.activePlayer] += this.gameSettings.secondsIncrement;
+      this.activePlayer = this.activePlayer === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+      this.selectedTileCoordinates = null;
+    }
   }
 
   private isMoveValid(fromTile: ITileArrayCoordinates, toTile: ITileArrayCoordinates): boolean {
@@ -106,7 +100,21 @@ export class PlayBoardComponent implements OnInit {
       return false
     }
 
-    return true;
+    const fromTileGame = this.getFromArrayCoordinates(fromTile);
+    const toTileGame = this.getFromArrayCoordinates(toTile);
+
+    const dFile = toTileGame.file - fromTileGame.file;
+    const dRank = toTileGame.rank - fromTileGame.rank;
+    const moveMap = fromPiece.moveMaps[this.activePlayer];
+    
+    if(dFile > 2 || dRank > 2 || dFile < -2 || dRank < -2) return false;
+
+    if(moveMap[2 + dRank][2 + dFile] === MoveType.MOVE) {
+      return true;
+    }
+    
+    return false;
+    
   }
 
   private getFromArrayCoordinates(arrayCoords: ITileArrayCoordinates): ITileGameCoordinates {

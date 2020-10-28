@@ -20,6 +20,5 @@ export class PlayAIComponent implements OnInit {
   public startGame(gameSettings: IGameSettings) {
     this.gameSettings = gameSettings;
     this.gameOn = true;
-    console.log(this.gameSettings)
   }
 }

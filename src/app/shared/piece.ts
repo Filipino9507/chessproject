@@ -1,4 +1,4 @@
-export enum MoveMapType {
+export enum MoveType {
     NONE = 0,
     PIECE = 1,
     MOVE = 2,
@@ -16,7 +16,8 @@ export abstract class Piece {
 
     protected _color: PieceColor;
     protected readonly _symbols: string[];
-    protected readonly _moveMap: MoveMapType[][];
+    protected readonly _moveMap: MoveType[][];
+    protected _moveMaps: MoveType[][][];
     protected readonly _value: number;
 
     public constructor(color: PieceColor) {
@@ -31,8 +32,10 @@ export abstract class Piece {
         return this._symbols[this._color];
     }
 
-    public get moveMap(): MoveMapType[][] {
-        return this._moveMap;
+    public get moveMaps(): MoveType[][][] {
+        if(!this._moveMaps) 
+            this._moveMaps = [this._moveMap, this._moveMap.slice().reverse()];
+        return this._moveMaps;
     }
 
     public get value(): number {
