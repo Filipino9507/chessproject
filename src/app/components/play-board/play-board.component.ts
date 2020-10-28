@@ -1,4 +1,3 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, Input, OnInit } from '@angular/core';
 import { IGameSettings, ITileArrayCoordinates, ITileGameCoordinates } from '@app/shared/models';
 
@@ -87,10 +86,8 @@ export class PlayBoardComponent implements OnInit {
 
   public makeAMove(toTile: ITileArrayCoordinates): void {
     const fromTile = this.selectedTile;
-    if(this.isMoveValid(
-      this.getFromArrayCoordinates(fromTile),
-      this.getFromArrayCoordinates(toTile)
-    )) {
+
+    if(this.isMoveValid(fromTile, toTile)) {
       this.boardArray[toTile.y][toTile.x] = this.boardArray[fromTile.y][fromTile.x];
       this.boardArray[fromTile.y][fromTile.x] = null;
     }
@@ -100,8 +97,15 @@ export class PlayBoardComponent implements OnInit {
     this.selectedTile = null;
   }
 
-  private isMoveValid(fromTile: ITileGameCoordinates, toTile: ITileGameCoordinates): boolean {
-    // Will return if the given destination is valid for selected piece
+  private isMoveValid(fromTile: ITileArrayCoordinates, toTile: ITileArrayCoordinates): boolean {
+
+    const fromPiece = this.boardArray[fromTile.y][fromTile.x];
+    const toPiece = this.boardArray[toTile.y][toTile.x];
+    
+    if(toPiece != null && fromPiece.color === toPiece.color) {
+      return false
+    }
+
     return true;
   }
 
