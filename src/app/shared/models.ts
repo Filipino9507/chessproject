@@ -6,3 +6,13 @@ export interface IGameSettings {
     secondsToThink: number;
     secondsIncrement: number;
 }
+
+export interface ITileArrayCoordinates {
+    x: number;
+    y: number;
+}
+
+export interface ITileGameCoordinates {
+    file: number;
+    rank: number;
+}

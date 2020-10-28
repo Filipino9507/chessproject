@@ -1,5 +1,6 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, Input, OnInit } from '@angular/core';
-import { IGameSettings } from '@app/shared/models';
+import { IGameSettings, ITileArrayCoordinates, ITileGameCoordinates } from '@app/shared/models';
 
 import { 
   Piece,
@@ -19,18 +20,23 @@ import {
 })
 export class PlayBoardComponent implements OnInit {
 
+  Math = Math;  // Enables Math module in template
+
   public static readonly boardDimen = 8;
 
   public boardArray: Piece[][];
-  public secondsLeft: number;
-  private selectedPiece: Piece;  // NEW
-  private possibleMoves: number[][];  // NEW
+  public secondsLeft: PieceColor[];
+  public activePlayer: PieceColor;
+
+  private selectedTile: ITileArrayCoordinates;
 
   @Input() public gameSettings: IGameSettings;
 
   public constructor() { }
 
   public ngOnInit(): void {
+    this.activePlayer = PieceColor.WHITE;
+    this.selectedTile = null;
     this.initializeBoardArray();
     this.initializeTimer();
   }
@@ -59,26 +65,59 @@ export class PlayBoardComponent implements OnInit {
   }
 
   public initializeTimer(): void {
-    this.secondsLeft = this.gameSettings.secondsToThink;
-    // Will initialize timer
-    // Timer will be shown in template
+    this.secondsLeft = new Array(2)
+    this.secondsLeft.fill(this.gameSettings.secondsToThink);
+    setInterval(_ => {
+      --this.secondsLeft[this.activePlayer];
+      if(this.secondsLeft[this.activePlayer] <= 0) {
+        // EMIT SIGNAL TO END THE GAME
+        clearInterval();
+      }
+    }, 1000);
   }
 
-  public selectAPiece(file: number, rank: number): void {
-    // Will select a piece based of the file and rank
-    // Will check if there is a piece, if not, it will unselect the current one
-    // Selected piece stored in this.selectedPiece
-
-    // Checks possible moves using this.isMoveValid
-    // Possible moves stored in this.possibleMoves
+  public selectTile(x: number, y: number): void {
+    // console.log(this.boardArray[y][x])
+    if(this.selectedTile == null && this.boardArray[y][x] != null) {
+      this.selectedTile = {x, y};
+    } else if(this.selectedTile != null){
+      this.makeAMove({x, y});
+    }
   }
 
-  public isMoveValid(file: number, rank: number): boolean {
+  public makeAMove(toTile: ITileArrayCoordinates): void {
+    const fromTile = this.selectedTile;
+    if(this.isMoveValid(
+      this.getFromArrayCoordinates(fromTile),
+      this.getFromArrayCoordinates(toTile)
+    )) {
+      this.boardArray[toTile.y][toTile.x] = this.boardArray[fromTile.y][fromTile.x];
+      this.boardArray[fromTile.y][fromTile.x] = null;
+    }
+    
+    this.secondsLeft[this.activePlayer] += this.gameSettings.secondsIncrement;
+    this.activePlayer = this.activePlayer === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+    this.selectedTile = null;
+  }
+
+  private isMoveValid(fromTile: ITileGameCoordinates, toTile: ITileGameCoordinates): boolean {
     // Will return if the given destination is valid for selected piece
     return true;
   }
 
-  public makeAMove(file: number, rank: number): void {
-    // Will make a move if valid, otherwise keep selected piece / unselect it ??? (decide)
+  private getFromArrayCoordinates(arrayCoords: ITileArrayCoordinates): ITileGameCoordinates {
+    const isWhite = this.gameSettings.playerColor === PieceColor.WHITE;
+    return {
+      file: isWhite ? arrayCoords.x : 7 - arrayCoords.x, 
+      rank: isWhite ? 7 - arrayCoords.y : arrayCoords.y
+    };
+  }
+
+  private getFromGameCoordinates(gameCoords: ITileGameCoordinates): ITileArrayCoordinates {
+    const isWhite = this.gameSettings.playerColor === PieceColor.WHITE;
+    return {
+      x: isWhite ? gameCoords.file : 7 - gameCoords.file,
+      y: isWhite ? 7 - gameCoords.rank : gameCoords.rank
+    }
   }
 }
