@@ -1,24 +1,26 @@
 <div class="center-content">
 
-    <h3>Time left: {{ Math.floor(secondsLeft[0] / 60) }}:{{ secondsLeft[0] % 60 | number: '2.0-0'}}</h3>
-
     <div class="board-container">
         <div class="board-row" *ngFor="let _ of boardArray; let i = index">
 
-            <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1}} </span>
+            <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span>
             
             <button 
             *ngFor="let _ of boardArray[i]; let j = index"
             [class]="'tile ' + (i % 2 === j % 2 ? 'white-tile' : 'black-tile')" 
             (click)="selectTile(j, i)">
-            {{ boardArray[i][j] != null ? boardArray[i][j].symbol : '‎'}} 
+            {{ boardArray[i][j] != null ? boardArray[i][j].symbol : '‎' }} 
             </button>
     
         </div>
     </div>
 
-    <h3>Time left: {{ Math.floor(secondsLeft[1] / 60) }}:{{ secondsLeft[1] % 60 | number: '2.0-0'}}</h3>
-
+    <div class="timer-container">
+        <h4 *ngFor="let secs of secondsLeft">
+            Time left: {{ Math.floor(secs / 60) }}:{{ secs % 60 | number: '2.0-0' }}
+        </h4>
+    </div>
+    
 </div>
 
 <!-- Empty character site: 

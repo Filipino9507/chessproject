@@ -1,5 +1,6 @@
 div.board-container {
     margin: 0 auto;
+    display: inline-block;
 }
 div.board-row {
     height: 75px;
@@ -17,4 +18,10 @@ button.white-tile {
 }
 button.black-tile {
     background-color: rgb(28, 115, 150);
+}
+
+div.timer-container {
+    margin: 0 auto;
+    padding: 30px;
+    display: inline-block;
 }
