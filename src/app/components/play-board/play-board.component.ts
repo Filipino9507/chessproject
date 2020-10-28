@@ -94,7 +94,7 @@ export class PlayBoardComponent implements OnInit {
       this.boardArray[toTile.y][toTile.x] = this.boardArray[fromTile.y][fromTile.x];
       this.boardArray[fromTile.y][fromTile.x] = null;
     }
-    
+
     this.secondsLeft[this.activePlayer] += this.gameSettings.secondsIncrement;
     this.activePlayer = this.activePlayer === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
     this.selectedTile = null;

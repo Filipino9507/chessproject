@@ -4,14 +4,14 @@
 
     <div class="board-container">
         <div class="board-row" *ngFor="let _ of boardArray; let i = index">
-    
+
             <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1}} </span>
-    
+            
             <button 
             *ngFor="let _ of boardArray[i]; let j = index"
             [class]="'tile ' + (i % 2 === j % 2 ? 'white-tile' : 'black-tile')" 
             (click)="selectTile(j, i)">
-            <!-- {{ boardArray[i][j] != null ? boardArray[i][j].symbol : ' '}}  -->
+            {{ boardArray[i][j] != null ? boardArray[i][j].symbol : '‎'}} 
             </button>
     
         </div>
@@ -20,4 +20,7 @@
     <h3>Time left: {{ Math.floor(secondsLeft[1] / 60) }}:{{ secondsLeft[1] % 60 | number: '2.0-0'}}</h3>
 
 </div>
+
+<!-- Empty character site: 
+    https://emptycharacter.com/ -->
 
