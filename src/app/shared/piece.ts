@@ -9,16 +9,26 @@ export abstract class Piece {
 
     protected _color: PieceColor;
     protected _tile: ITile;
+    protected _hasMoved: boolean;
 
     protected readonly _symbols: string[];
     protected readonly _value: number;
 
     public constructor(color: PieceColor) {
         this._color = color;
+        this._hasMoved = false;
     }
 
     public get color(): PieceColor {
         return this._color;
+    }
+
+    public get hasMoved(): boolean {
+        return this._hasMoved;
+    }
+
+    public set tile(tile: ITile) {
+        this._tile = tile;
     }
 
     public get symbol(): string {
@@ -27,10 +37,6 @@ export abstract class Piece {
 
     public get value(): number {
         return this._value;
-    }
-
-    public set tile(tile: ITile) {
-        this._tile = tile;
     }
 
     public updateBoardPossibleMoves(board: Board, fromCoords: ICoordinates): void {
@@ -48,7 +54,7 @@ export class Pawn extends Piece {
     protected readonly _value = 1;
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        const moves: ICoordinates[] = [];
+        let moves: ICoordinates[] = [];
 
         // Normal move
         const toCoords = Board.addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
@@ -85,8 +91,22 @@ export class Knight extends Piece {
     protected readonly _symbols = ['♘', '♞'];
     protected readonly _value = 3;
 
-    public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [];
+    public generatePossibleMoves(_: Board, fromCoords: ICoordinates): ICoordinates[] {
+        let moves: ICoordinates[] = [];
+
+        for(let toCoords of [
+            Board.addCoordinates(fromCoords, {file: -1, rank: 2}),
+            Board.addCoordinates(fromCoords, {file: 1, rank: 2}),
+            Board.addCoordinates(fromCoords, {file: -1, rank: -2}),
+            Board.addCoordinates(fromCoords, {file: 1, rank: -2}),
+            Board.addCoordinates(fromCoords, {file: 2, rank: -1}),
+            Board.addCoordinates(fromCoords, {file: 2, rank: 1}),
+            Board.addCoordinates(fromCoords, {file: -2, rank: -1}),
+            Board.addCoordinates(fromCoords, {file: -2, rank: 1}),
+        ]) {
+            if(Board.contains(toCoords)) moves.push(toCoords);
+        }
+        return moves;
     }
 }
 
@@ -125,8 +145,38 @@ export class King extends Piece {
     protected readonly _symbols = ['♔', '♚'];
     protected readonly _value = Infinity;
 
+    public isThreatened(board: Board, toCoords: ICoordinates): boolean {
+        for(let piece of board.getTile(toCoords).threatenedBy) {
+            if(piece.color !== this._color) 
+                return true;
+        }
+        return false;
+    }
+
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [];
+        let moves: ICoordinates[] = [];
+
+        for(let dRank = -1; dRank <= 1; dRank++) {
+            for(let dFile = -1; dFile <= 1; dFile++) {
+                if(dRank === 0 && dFile === 0) continue;
+
+                const toCoords = Board.addCoordinates(fromCoords, {file: dFile, rank: dRank});
+                if(Board.contains(toCoords) && !this.isThreatened(board, toCoords))
+                    moves.push(toCoords);
+
+                // EVENTUALLY NEED TO SOLVE {BIG PROBLEMS} WITH:
+                // - pawns count their normal moves as threatening the squares
+                // - kings do not count the squares next to kings - since they cannot go there,
+                // but therefore do not prevent the other king from going there
+
+                // POSSIBLE FIX:
+                // - two separate sets (threatenedBy) on each spot - one for 'pacifist' moves and
+                // one for moves/captures
+                // - e.g. pawn moving forward or castling is a 'pacifist' move 
+            }
+        }
+
+        return moves;
     }
 }
 
