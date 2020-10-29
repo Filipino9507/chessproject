@@ -56,11 +56,16 @@ export class PlayBoardComponent implements OnInit {
             
         } else {
 
-            if(this.board.getTile(coords).threatenedBy.has(this.selectedTile.piece)) {
+            const toTile = this.board.getTile(coords);
+            const hasSameColorPiece = toTile.piece != null && 
+                toTile.piece.color === this.activePlayerColor;
+
+            if(toTile.threatenedBy.has(this.selectedTile.piece) && !hasSameColorPiece) {
                 this.board.movePiece(this.selectedTile.coords, coords);
+                this.board.updatePossibleMoves();
+                this.passTurn();
             }
-            this.board.updatePossibleMoves();
-            this.passTurn();
+            this.selectedTile = null;
             // CHECK IF SQUARE IS THREATENED BY THIS AND THAT A PIECE OF SAME COLOR NOT HERE
             // (NEED TO MIND THAT LATER IN PIECE LOGIC, E.G. BISHOP LOGIC)
         }
