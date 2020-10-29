@@ -1,16 +1,17 @@
 <div class="center-content">
 
     <div class="board-container">
-        <div class="board-row" *ngFor="let _ of boardArray; let i = index">
+        <div class="board-row" *ngFor="let _ of board.tileArray; let rank = index">
 
             <!-- TO BE REFACTORED FROM WITHIN .TS FILE -->
             <!-- <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span> -->
             
             <button 
-            *ngFor="let _ of boardArray[i]; let j = index"
-            [class]="'tile ' + (i % 2 === j % 2 ? 'white-tile' : 'black-tile')" 
-            (click)="selectTile(j, i)">
-            {{ boardArray[i][j].piece != null ? boardArray[i][j].piece.symbol : '‎' }} 
+            *ngFor="let _ of board.tileArray[rank]; let file = index"
+            [ngClass]="['tile', rank % 2 === file % 2 ? 'white-tile' : 'black-tile']"
+            
+            (click)="clickTile({rank: rank, file: file})">
+            {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
             </button>
     
         </div>
