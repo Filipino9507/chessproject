@@ -10,7 +10,7 @@
             *ngFor="let _ of boardArray[i]; let j = index"
             [class]="'tile ' + (i % 2 === j % 2 ? 'white-tile' : 'black-tile')" 
             (click)="selectTile(j, i)">
-            {{ boardArray[i][j] != null ? boardArray[i][j].symbol : '‎' }} 
+            {{ boardArray[i][j].piece != null ? boardArray[i][j].piece.symbol : '‎' }} 
             </button>
     
         </div>

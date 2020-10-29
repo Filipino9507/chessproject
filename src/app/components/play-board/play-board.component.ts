@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { IGameSettings, ITileArrayCoordinates, ITileGameCoordinates } from '@app/shared/models';
 
-import { 
-  Piece, PieceColor, MoveType,
-  Pawn, Knight, Bishop, Rook, Queen, King
-} from '@app/shared/piece';
+import { Piece, PieceColor,
+Pawn, Knight, Bishop, Rook, Queen, King } from '@app/shared/piece';
+import { ITile } from '@app/shared/tile';
 
 @Component({
   selector: 'app-play-board',
@@ -17,9 +17,9 @@ export class PlayBoardComponent implements OnInit {
 
   public static readonly boardDimen = 8;
 
-  public boardArray: Piece[][];
+  public boardArray: ITile[][];
   public secondsLeft: PieceColor[];
-  public activePlayer: PieceColor;
+  public activePlayerColor: PieceColor;
 
   private selectedTileCoordinates: ITileArrayCoordinates;
 
@@ -28,7 +28,7 @@ export class PlayBoardComponent implements OnInit {
   public constructor() { }
 
   public ngOnInit(): void {
-    this.activePlayer = PieceColor.WHITE;
+    this.activePlayerColor = PieceColor.WHITE;
     this.selectedTileCoordinates = null;
     this.initializeBoardArray();
     this.initializeTimer();
@@ -37,22 +37,34 @@ export class PlayBoardComponent implements OnInit {
   private initializeBoardArray(): void {
     this.boardArray = new Array(PlayBoardComponent.boardDimen);
 
-    for(let i = 0; i < PlayBoardComponent.boardDimen; i++) {
-      this.boardArray[i] = new Array(PlayBoardComponent.boardDimen);
+    for(let rank = 0; rank < PlayBoardComponent.boardDimen; rank++) {
+      this.boardArray[rank] = new Array(PlayBoardComponent.boardDimen);
 
-      const color = (this.gameSettings.playerColor === PieceColor.WHITE ? i > 3 : i <= 3) 
+      const color = (this.gameSettings.playerColor === PieceColor.WHITE ? rank > 3 : rank <= 3) 
       ? PieceColor.WHITE : PieceColor.BLACK;
 
-      if(i === 0 || i === 7) {
-        this.boardArray[i][0] = this.boardArray[i][7] = new Rook(color);
-        this.boardArray[i][1] = this.boardArray[i][6] = new Knight(color);
-        this.boardArray[i][2] = this.boardArray[i][5] = new Bishop(color);
-        this.boardArray[i][3] = new Queen(color);
-        this.boardArray[i][4] = new King(color);
-      } else if(i === 1 || i === 6) {
-        this.boardArray[i].fill(new Pawn(color));
-      } else {
-        this.boardArray[i].fill(null);
+      for(let file = 0; file < PlayBoardComponent.boardDimen; file++) {
+        let piece;
+        switch(rank) {
+          case 0: case 7:
+            switch(file) {
+              case 3: piece = new Queen(color); break;
+              case 4: piece = new King(color); break;
+              case 0: case 7: piece = new Rook(color); break;
+              case 1: case 6: piece = new Knight(color); break;
+              default: piece = new Bishop(color); break;
+            } 
+            break;
+          case 1: case 6: piece = new Pawn(color); break;
+          default: piece = null;
+        }
+
+        this.boardArray[rank][file] = {
+          file: rank, 
+          rank: file, 
+          highlighted: false, 
+          piece: piece
+        };
       }
     }
   }
@@ -61,8 +73,8 @@ export class PlayBoardComponent implements OnInit {
     this.secondsLeft = new Array(2)
     this.secondsLeft.fill(this.gameSettings.secondsToThink);
     setInterval(_ => {
-      --this.secondsLeft[this.activePlayer];
-      if(this.secondsLeft[this.activePlayer] <= 0) {
+      --this.secondsLeft[this.activePlayerColor];
+      if(this.secondsLeft[this.activePlayerColor] <= 0) {
         // EMIT SIGNAL TO END THE GAME
         clearInterval();
       }
@@ -70,66 +82,7 @@ export class PlayBoardComponent implements OnInit {
   }
 
   public selectTile(x: number, y: number): void {
-    const selected = this.boardArray[y][x];
-    if(selected != null && selected.color !== this.activePlayer) {
-      this.selectedTileCoordinates = {x, y};
-    } else if(this.selectedTileCoordinates != null){
-      this.makeAMove({x, y});
-    }
-  }
-
-  public makeAMove(toTile: ITileArrayCoordinates): void {
-    const fromTile = this.selectedTileCoordinates;
-
-    if(this.isMoveValid(fromTile, toTile)) {
-      this.boardArray[toTile.y][toTile.x] = this.boardArray[fromTile.y][fromTile.x];
-      this.boardArray[fromTile.y][fromTile.x] = null;
-
-      this.secondsLeft[this.activePlayer] += this.gameSettings.secondsIncrement;
-      this.activePlayer = this.activePlayer === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-      this.selectedTileCoordinates = null;
-    }
-  }
-
-  private isMoveValid(fromTile: ITileArrayCoordinates, toTile: ITileArrayCoordinates): boolean {
-
-    const fromPiece = this.boardArray[fromTile.y][fromTile.x];
-    const toPiece = this.boardArray[toTile.y][toTile.x];
-    
-    if(toPiece != null && fromPiece.color === toPiece.color) {
-      return false
-    }
-
-    const fromTileGame = this.getFromArrayCoordinates(fromTile);
-    const toTileGame = this.getFromArrayCoordinates(toTile);
-
-    const dFile = toTileGame.file - fromTileGame.file;
-    const dRank = toTileGame.rank - fromTileGame.rank;
-    const moveMap = fromPiece.moveMaps[this.activePlayer];
-    
-    if(dFile > 2 || dRank > 2 || dFile < -2 || dRank < -2) return false;
-
-    if(moveMap[2 + dRank][2 + dFile] === MoveType.MOVE) {
-      return true;
-    }
-    
-    return false;
     
   }
 
-  private getFromArrayCoordinates(arrayCoords: ITileArrayCoordinates): ITileGameCoordinates {
-    const isWhite = this.gameSettings.playerColor === PieceColor.WHITE;
-    return {
-      file: isWhite ? arrayCoords.x : 7 - arrayCoords.x, 
-      rank: isWhite ? 7 - arrayCoords.y : arrayCoords.y
-    };
-  }
-
-  private getFromGameCoordinates(gameCoords: ITileGameCoordinates): ITileArrayCoordinates {
-    const isWhite = this.gameSettings.playerColor === PieceColor.WHITE;
-    return {
-      x: isWhite ? gameCoords.file : 7 - gameCoords.file,
-      y: isWhite ? 7 - gameCoords.rank : gameCoords.rank
-    }
-  }
 }
