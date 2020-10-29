@@ -53,6 +53,7 @@ export class Pawn extends Piece {
     protected readonly _symbols = ['♙', '♟'];
     protected readonly _value = 1;
 
+    // REFACTOR INTO FOUR METHODS - this one and three for each kind of move
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
 
@@ -115,6 +116,7 @@ export class Bishop extends Piece {
     protected readonly _symbols = ['♗', '♝'];
     protected readonly _value = 3;
 
+    // IMPLEMENT BISHOP, ROOK AND QUEEN
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         return [];
     }
