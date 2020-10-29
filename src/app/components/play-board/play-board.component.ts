@@ -19,6 +19,7 @@ export class PlayBoardComponent implements OnInit {
     public activePlayerColor: PieceColor;
 
     private selectedTile: ITile;
+    // private selectedTilePossibilities: ICoordinates[];
 
     @Input() public gameSettings: IGameSettings;
 
@@ -46,15 +47,18 @@ export class PlayBoardComponent implements OnInit {
     public clickTile(coords: ICoordinates): void {
         const fromTile = this.board.getTile(coords);
 
-        if(this.selectedTile == null && fromTile.piece != null && 
-        fromTile.piece.color === this.activePlayerColor) {
+        if(this.selectedTile == null) {
 
-        // this.selectedTile = fromTile;
-            for(let coord of fromTile.piece.generatePossibleMoves(this.board, fromTile.coords)) {
-                console.log(coord);
+            if(fromTile.piece != null && fromTile.piece.color === this.activePlayerColor) {
+                this.selectedTile = fromTile;
+                // HIGHLIGHT SQUARES WHICH ARE THREATENED BY THIS
             }
+            
         } else {
-
+            
+            // CHECK IF SQUARE IS THREATENED BY THIS AND THAT A PIECE OF SAME COLOR NOT HERE
+            // (NEED TO MIND THAT LATER IN PIECE LOGIC, E.G. BISHOP LOGIC)
+            
         }
     }
 

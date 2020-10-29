@@ -10,6 +10,7 @@ export abstract class Piece {
     protected _color: PieceColor;
     protected readonly _symbols: string[];
     protected readonly _value: number;
+    protected _tempPossibilities: ICoordinates[];
 
     public constructor(color: PieceColor) {
         this._color = color;
@@ -25,6 +26,17 @@ export abstract class Piece {
 
     public get value(): number {
         return this._value;
+    }
+
+    public updateBoardPossibleMoves(board: Board, fromCoords: ICoordinates): void {
+        this._tempPossibilities = this.generatePossibleMoves(board, fromCoords);
+        for(let coord of this._tempPossibilities) {
+            board.getTile(coord).threatenedBy.add(this);
+        }
+    }
+
+    public clearTempPossibilities(): void {
+        this._tempPossibilities = [];
     }
 
     public abstract generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[];
@@ -74,7 +86,7 @@ export class Knight extends Piece {
     protected readonly _value = 3;
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [{rank: 0, file: 0}, {rank: 0, file: 0}];
+        return [];
     }
 }
 
@@ -84,7 +96,7 @@ export class Bishop extends Piece {
     protected readonly _value = 3;
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [{rank: 0, file: 0}, {rank: 0, file: 0}];
+        return [];
     }
 }
 
@@ -94,7 +106,7 @@ export class Rook extends Piece {
     protected readonly _value = 5;
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [{rank: 0, file: 0}, {rank: 0, file: 0}];
+        return [];
     }
 }
 
@@ -104,7 +116,7 @@ export class Queen extends Piece {
     protected readonly _value = 9;
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [{rank: 0, file: 0}, {rank: 0, file: 0}];
+        return [];
     }
 }
 
@@ -114,7 +126,7 @@ export class King extends Piece {
     protected readonly _value = Infinity;
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return [{rank: 0, file: 0}, {rank: 0, file: 0}];
+        return [];
     }
 }
 
