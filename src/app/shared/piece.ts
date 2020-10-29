@@ -8,9 +8,10 @@ export enum PieceColor {
 export abstract class Piece {
 
     protected _color: PieceColor;
+    protected _tile: ITile;
+
     protected readonly _symbols: string[];
     protected readonly _value: number;
-    protected _tempPossibilities: ICoordinates[];
 
     public constructor(color: PieceColor) {
         this._color = color;
@@ -28,15 +29,14 @@ export abstract class Piece {
         return this._value;
     }
 
-    public updateBoardPossibleMoves(board: Board, fromCoords: ICoordinates): void {
-        this._tempPossibilities = this.generatePossibleMoves(board, fromCoords);
-        for(let coord of this._tempPossibilities) {
-            board.getTile(coord).threatenedBy.add(this);
-        }
+    public set tile(tile: ITile) {
+        this._tile = tile;
     }
 
-    public clearTempPossibilities(): void {
-        this._tempPossibilities = [];
+    public updateBoardPossibleMoves(board: Board, fromCoords: ICoordinates): void {
+        for(let coord of this.generatePossibleMoves(board, fromCoords)) {
+            board.getTile(coord).threatenedBy.add(this);
+        }
     }
 
     public abstract generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[];

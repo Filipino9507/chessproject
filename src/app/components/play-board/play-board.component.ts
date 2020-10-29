@@ -55,11 +55,21 @@ export class PlayBoardComponent implements OnInit {
             }
             
         } else {
-            
+
+            if(this.board.getTile(coords).threatenedBy.has(this.selectedTile.piece)) {
+                this.board.movePiece(this.selectedTile.coords, coords);
+            }
+            this.board.updatePossibleMoves();
+            this.passTurn();
             // CHECK IF SQUARE IS THREATENED BY THIS AND THAT A PIECE OF SAME COLOR NOT HERE
             // (NEED TO MIND THAT LATER IN PIECE LOGIC, E.G. BISHOP LOGIC)
-            
         }
+    }
+
+    // Temporary to test opposite side, later will change
+    private passTurn(): void {
+        this.activePlayerColor = this.activePlayerColor === PieceColor.WHITE ? 
+            PieceColor.BLACK : PieceColor.WHITE;
     }
 
 }

@@ -21,8 +21,7 @@ export class Board {
 
     constructor() {
         this._initializeTileArray();
-        this._updateAllPossibleMoves();
-
+        this.updatePossibleMoves();
     }
 
     public getTile(coords: ICoordinates): ITile {
@@ -63,18 +62,39 @@ export class Board {
                     piece: piece,
                     threatenedBy: new Set()
                 };
+
+                if(piece != null)
+                    this._tileArray[rank][file].piece.tile = this._tileArray[rank][file];
             }
         }
     }
 
-    private _updateAllPossibleMoves() {
+    private clearPossibleMoves() {
+        for(let rank of this._tileArray) {
+            for(let tile of rank) {
+                tile.threatenedBy.clear();
+            }
+        }
+    }
+
+    public updatePossibleMoves() {
+        this.clearPossibleMoves();
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const piece = this._tileArray[rank][file].piece;
                 if(piece != null)
-                    piece.updateBoardPossibleMoves(this, {rank, file});
+                   piece.updateBoardPossibleMoves(this, {rank, file});
             }
         }
+    }
+
+    public movePiece(fromCoords: ICoordinates, toCoords: ICoordinates): void {
+        const fromTile = this.getTile(fromCoords);
+        const toTile = this.getTile(toCoords);
+
+        toTile.piece = fromTile.piece;
+        fromTile.piece = null;
+        toTile.piece.tile = fromTile;
     }
 
     public static contains(coords: ICoordinates): boolean {
