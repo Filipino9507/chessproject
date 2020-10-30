@@ -86,6 +86,7 @@ export class Board {
                    piece.updateBoardPossibleMoves(this, {rank, file});
             }
         }
+        // console.log(this._tileArray);
     }
 
     public movePiece(fromCoords: ICoordinates, toCoords: ICoordinates): void {
@@ -109,4 +110,8 @@ export class Board {
     public static addCoordinates(coords1: ICoordinates, coords2: ICoordinates): ICoordinates {
         return {file: coords1.file + coords2.file, rank: coords1.rank + coords2.rank};
     }
-}
+
+    public static scaleCoordinates(coords: ICoordinates, scale: number): ICoordinates {
+        return {file: scale * coords.file, rank: scale * coords.rank};
+    }
+ }
