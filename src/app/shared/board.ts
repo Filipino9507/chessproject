@@ -7,25 +7,30 @@ import { Rook } from '@app/shared/piece/rook';
 import { Queen } from '@app/shared/piece/queen';
 import { King } from '@app/shared/piece/king';
 
+/**
+ * Class holding the board array, its associated methods and utility methods for
+ * working with tiles and coordinates
+ */
 export class Board {
 
+    /** The dimensions of the board */
     public static readonly BOARD_DIMEN = 8;
 
+    /** The board */
     private _tileArray: ITile[][];
 
+    /** Constructor */
     constructor() {
         this._initializeTileArray();
-        this.updatePossibleMoves();
+        this.updateThreatMoves();
     }
 
+    /** Returns the tile specified by the given coordinates */
     public getTile(coords: ICoordinates): ITile {
         return this._tileArray[coords.rank][coords.file];
     }
 
-    public get tileArray(): ITile[][] {
-        return this._tileArray;
-    }
-
+    /** Initializes the _tileArray with the starting pieces */
     private _initializeTileArray(): void {
         this._tileArray = new Array(Board.BOARD_DIMEN);
 
@@ -63,7 +68,8 @@ export class Board {
         }
     }
 
-    private clearPossibleMoves() {
+    /** Clears threat indicators from tiles */
+    private clearThreatMoves(): void {
         for(let rank of this._tileArray) {
             for(let tile of rank) {
                 tile.threatenedBy.clear();
@@ -71,8 +77,9 @@ export class Board {
         }
     }
 
-    public updatePossibleMoves() {
-        this.clearPossibleMoves();
+    /** Updates threat indicators on tiles */
+    public updateThreatMoves(): void {
+        this.clearThreatMoves();
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const piece = this._tileArray[rank][file].piece;
@@ -82,36 +89,78 @@ export class Board {
         }
     }
 
+    /** Highlights squares specified by the given coordinates */
+    public highlightSquares(coordsArray: ICoordinates[]): void {
+        for(const coords of coordsArray) 
+            this.getTile(coords).highlighted = true;
+    }
+
+    /** Clears all highlighted squares on board */
+    public clearHighlightedSquares(): void {
+        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
+                this._tileArray[rank][file].highlighted = false;
+            }
+        }
+    }
+
+    /** Moves a piece from one set of coordinates to another */
     public movePiece(fromCoords: ICoordinates, toCoords: ICoordinates): void {
         const fromTile = this.getTile(fromCoords);
         const toTile = this.getTile(toCoords);
 
         toTile.piece = fromTile.piece;
         fromTile.piece = null;
+
         toTile.piece.tile = fromTile;
+        toTile.piece.hasMoved = true;
     }
 
+    /** Checks whether the tile at the given coordinates is accessible by a king of given color */
+    public accessibleByKing(coords: ICoordinates, kingColor: PieceColor): boolean {
+        for(let piece of this.getTile(coords).threatenedBy) {
+            if(piece.color !== kingColor) 
+                return false;
+        }
+        return true;
+    }
+
+    /** Getter for _tileArray */
+    public get tileArray(): ITile[][] {
+        return this._tileArray;
+    }
+
+    // #region STATIC
+
+    /** Check whether the given coordinates exist within the board */
     public static contains(coords: ICoordinates): boolean {
         return coords.rank >= 0 && coords.rank < Board.BOARD_DIMEN && 
         coords.file >= 0 && coords.file < Board.BOARD_DIMEN;
     }
 
+    /** Returns whether two coordinates are equal */
     public static areEqual(coords1: ICoordinates, coords2: ICoordinates): boolean {
         return coords1.rank === coords2.rank && coords1.file === coords2.file;
     }
 
+    /** Returns two coordinates added together */
     public static addCoordinates(coords1: ICoordinates, coords2: ICoordinates): ICoordinates {
         return {file: coords1.file + coords2.file, rank: coords1.rank + coords2.rank};
     }
 
+    /** Returns coordinates object multiplied by a scalar value */
     public static scaleCoordinates(coords: ICoordinates, scale: number): ICoordinates {
         return {file: scale * coords.file, rank: scale * coords.rank};
     }
 
+    /** Checks whether an array contains given coordinates */
     public static areCoordinatesInArray(coords: ICoordinates, array: ICoordinates[]): boolean {
         for(let elt of array) {
             if(Board.areEqual(elt, coords)) return true;
         }
         return false;
     }
+
+    // #endregion
+
  }

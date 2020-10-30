@@ -8,7 +8,11 @@
             
             <button 
             *ngFor="let _ of board.tileArray[rank]; let file = index"
-            [ngClass]="['tile', rank % 2 === file % 2 ? 'white-tile' : 'black-tile']"
+            [ngClass]="[
+                'tile', 
+                rank % 2 === file % 2 ? 'white-tile' : 'black-tile',
+                board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
+            ]"
             
             (click)="clickTile({rank: rank, file: file})">
             {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 

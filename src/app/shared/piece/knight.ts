@@ -7,7 +7,7 @@ export class Knight extends Piece {
     protected readonly _symbols = ['♘', '♞'];
     protected readonly _value = 3;
 
-    public generatePossibleMoves(_: Board, fromCoords: ICoordinates): ICoordinates[] {
+    protected _generateMoves(_: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
 
         for(let toCoords of [

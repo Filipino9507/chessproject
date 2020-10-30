@@ -16,10 +16,17 @@ export abstract class Piece {
         this._hasMoved = false;
     }
 
-    public abstract generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[];
+    protected abstract _generateMoves(board: Board, fromCoords: ICoordinates): ICoordinates[];
+
+    public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
+        return this._generateMoves(board, fromCoords).filter((coords) => {
+            const piece = board.getTile(coords).piece;
+            return piece == null || piece.color !== this._color;
+        });
+    }
 
     public generateThreatMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return this.generatePossibleMoves(board, fromCoords);
+        return this._generateMoves(board, fromCoords);
     }       
 
     public updateBoardThreats(board: Board, fromCoords: ICoordinates): void {
@@ -58,6 +65,10 @@ export abstract class Piece {
 
     public get hasMoved(): boolean {
         return this._hasMoved;
+    }
+
+    public set hasMoved(hasMoved: boolean) {
+        this._hasMoved = hasMoved;
     }
 
     public set tile(tile: ITile) {

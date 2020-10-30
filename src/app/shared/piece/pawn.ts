@@ -20,25 +20,27 @@ export class Pawn extends Piece {
     private generateFirstRowMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         const betweenCoords = Board.addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
-        const firstRowToCoords = Board.addCoordinates(
+        const toCoords = Board.addCoordinates(
             fromCoords, {file: 0, rank: 2 * this.movementDirection()}
         );
-        if(Board.contains(firstRowToCoords) && 
-        board.getTile(betweenCoords).piece == null && board.getTile(firstRowToCoords).piece == null &&
+        if(Board.contains(toCoords) && 
+        board.getTile(betweenCoords).piece == null && board.getTile(toCoords).piece == null &&
         (fromCoords.rank === 1 || fromCoords.rank === 6))
-            moves.push(firstRowToCoords);
+            moves.push(toCoords);
         return moves;
     }
 
     private generateCaptureMoves(board: Board, fromCoords: ICoordinates, canGoToEmpty: boolean): ICoordinates[] {
         let moves: ICoordinates[] = [];
-        for(let captureToCoords of [
+        for(let toCoords of [
             Board.addCoordinates(fromCoords, {file: 1, rank: this.movementDirection()}),
             Board.addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
         ]) {
-            if(Board.contains(captureToCoords) && 
-            (board.getTile(captureToCoords).piece != null || canGoToEmpty))
-                moves.push(captureToCoords);
+            if(Board.contains(toCoords)) {
+                const piece = board.getTile(toCoords).piece;
+                if ((piece != null && piece.color !== this._color) || canGoToEmpty)
+                    moves.push(toCoords);
+            }
         }
         return moves;
     }
@@ -47,7 +49,7 @@ export class Pawn extends Piece {
         return this.generateCaptureMoves(board, fromCoords, true);
     }
 
-    public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
+    protected _generateMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         return this.generateNormalMoves(board, fromCoords)
         .concat(this.generateFirstRowMoves(board, fromCoords)
         .concat(this.generateCaptureMoves(board, fromCoords, false)))

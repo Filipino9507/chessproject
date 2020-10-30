@@ -45,39 +45,43 @@ export class PlayBoardComponent implements OnInit {
     }
 
     public clickTile(coords: ICoordinates): void {
+        if(this.selectedTile == null)
+            this.attemptInitiateMove(coords);   
+        else 
+            this.attemptExecuteMove(coords);
+    }
+
+    private attemptInitiateMove(coords): void {
         const fromTile = this.board.getTile(coords);
-
-        if(this.selectedTile == null) {
-
-            if(fromTile.piece != null && fromTile.piece.color === this.activePlayerColor) {
-                this.selectedTile = fromTile;
-                this.selectedTilePossibilities = fromTile.piece.generatePossibleMoves(this.board, coords);
-                // HIGHLIGHT SQUARES WHICH ARE THREATENED BY THIS
-            }
-            
-        } else {
-
-            const toTile = this.board.getTile(coords);
-            const hasSameColorPiece = toTile.piece != null && 
-                toTile.piece.color === this.activePlayerColor;
-
-            if(Board.areCoordinatesInArray(coords, this.selectedTilePossibilities) && !hasSameColorPiece) {
-                this.board.movePiece(this.selectedTile.coords, coords);
-                this.board.updatePossibleMoves();
-                this.passTurn();
-            }
-            this.selectedTile = null;
-            this.selectedTilePossibilities = null;
-
-            // CHECK IF SQUARE IS THREATENED BY THIS AND THAT A PIECE OF SAME COLOR NOT HERE
-            // (NEED TO MIND THAT LATER IN PIECE LOGIC, E.G. BISHOP LOGIC)
+        if(fromTile.piece != null && fromTile.piece.color === this.activePlayerColor) {
+            this.selectedTile = fromTile;
+            this.selectedTilePossibilities = fromTile.piece.generatePossibleMoves(this.board, coords);
+            this.board.highlightSquares(this.selectedTilePossibilities);
         }
     }
 
-    // Temporary to test opposite side, later will change
+    private attemptExecuteMove(coords): void {
+        const toTile = this.board.getTile(coords);
+        const hasSameColorPiece = toTile.piece != null && 
+            toTile.piece.color === this.activePlayerColor;
+
+        if(Board.areCoordinatesInArray(coords, this.selectedTilePossibilities) && !hasSameColorPiece) {
+            this.board.movePiece(this.selectedTile.coords, coords);
+            this.board.updateThreatMoves();
+            this.passTurn();
+        }
+
+        this.board.clearHighlightedSquares();
+        if(hasSameColorPiece && toTile !== this.selectedTile) {
+            this.attemptInitiateMove(coords);
+        } else {
+            this.selectedTile = null;
+            this.selectedTilePossibilities = null;
+        }
+    }
+
     private passTurn(): void {
         this.activePlayerColor = this.activePlayerColor === PieceColor.WHITE ? 
             PieceColor.BLACK : PieceColor.WHITE;
     }
-
 }
