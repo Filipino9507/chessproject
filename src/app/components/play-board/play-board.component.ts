@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IGameSettings } from '@app/shared/models';
-import { Board, ITile, ICoordinates } from '@app/shared/board';
-import { Piece, PieceColor,
-Pawn, Knight, Bishop, Rook, Queen, King } from '@app/shared/piece';
-
+import { Board } from '@app/shared/board';
+import { ITile, ICoordinates } from '@app/shared/tile';
+import { PieceColor } from '@app/shared/piece/piece-color';
 
 @Component({
     selector: 'app-play-board',
@@ -19,7 +18,7 @@ export class PlayBoardComponent implements OnInit {
     public activePlayerColor: PieceColor;
 
     private selectedTile: ITile;
-    // private selectedTilePossibilities: ICoordinates[];
+    private selectedTilePossibilities: ICoordinates[];
 
     @Input() public gameSettings: IGameSettings;
 
@@ -28,6 +27,7 @@ export class PlayBoardComponent implements OnInit {
     public ngOnInit(): void {
         this.activePlayerColor = PieceColor.WHITE;
         this.selectedTile = null;
+        this.selectedTilePossibilities = null;
         this.board = new Board();
         this.initializeTimer();
     }
@@ -51,6 +51,7 @@ export class PlayBoardComponent implements OnInit {
 
             if(fromTile.piece != null && fromTile.piece.color === this.activePlayerColor) {
                 this.selectedTile = fromTile;
+                this.selectedTilePossibilities = fromTile.piece.generatePossibleMoves(this.board, coords);
                 // HIGHLIGHT SQUARES WHICH ARE THREATENED BY THIS
             }
             
@@ -60,12 +61,14 @@ export class PlayBoardComponent implements OnInit {
             const hasSameColorPiece = toTile.piece != null && 
                 toTile.piece.color === this.activePlayerColor;
 
-            if(toTile.threatenedBy.has(this.selectedTile.piece) && !hasSameColorPiece) {
+            if(Board.areCoordinatesInArray(coords, this.selectedTilePossibilities) && !hasSameColorPiece) {
                 this.board.movePiece(this.selectedTile.coords, coords);
                 this.board.updatePossibleMoves();
                 this.passTurn();
             }
             this.selectedTile = null;
+            this.selectedTilePossibilities = null;
+
             // CHECK IF SQUARE IS THREATENED BY THIS AND THAT A PIECE OF SAME COLOR NOT HERE
             // (NEED TO MIND THAT LATER IN PIECE LOGIC, E.G. BISHOP LOGIC)
         }

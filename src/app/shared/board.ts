@@ -1,17 +1,11 @@
-import { Piece, PieceColor,
-Pawn, Knight, Bishop, Rook, Queen, King } from '@app/shared/piece'; 
-
-export interface ITile {
-    coords: ICoordinates;
-    highlighted: boolean;
-    piece: Piece;
-    threatenedBy: Set<Piece>;
-}
-
-export interface ICoordinates {
-    file: number;
-    rank: number;
-}
+import { PieceColor } from '@app/shared/piece/piece-color';
+import { ITile, ICoordinates } from '@app/shared/tile';
+import { Pawn } from '@app/shared/piece/pawn';
+import { Knight } from '@app/shared/piece/knight';
+import { Bishop } from '@app/shared/piece/bishop';
+import { Rook } from '@app/shared/piece/rook';
+import { Queen } from '@app/shared/piece/queen';
+import { King } from '@app/shared/piece/king';
 
 export class Board {
 
@@ -38,7 +32,7 @@ export class Board {
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             this._tileArray[rank] = new Array(Board.BOARD_DIMEN);
 
-            const color = rank > 3  ? PieceColor.WHITE : PieceColor.BLACK;
+            const color = rank > 3 ? PieceColor.WHITE : PieceColor.BLACK;
 
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 let piece;
@@ -83,10 +77,9 @@ export class Board {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const piece = this._tileArray[rank][file].piece;
                 if(piece != null)
-                   piece.updateBoardPossibleMoves(this, {rank, file});
+                   piece.updateBoardThreats(this, {rank, file});
             }
         }
-        // console.log(this._tileArray);
     }
 
     public movePiece(fromCoords: ICoordinates, toCoords: ICoordinates): void {
@@ -113,5 +106,12 @@ export class Board {
 
     public static scaleCoordinates(coords: ICoordinates, scale: number): ICoordinates {
         return {file: scale * coords.file, rank: scale * coords.rank};
+    }
+
+    public static areCoordinatesInArray(coords: ICoordinates, array: ICoordinates[]): boolean {
+        for(let elt of array) {
+            if(Board.areEqual(elt, coords)) return true;
+        }
+        return false;
     }
  }
