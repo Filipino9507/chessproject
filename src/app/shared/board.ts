@@ -108,12 +108,53 @@ export class Board {
     public movePiece(fromCoords: ICoordinates, toCoords: ICoordinates): void {
         const fromTile = this.getTile(fromCoords);
         const toTile = this.getTile(toCoords);
+        const isCapture = toTile.piece != null;
 
         toTile.piece = fromTile.piece;
         fromTile.piece = null;
 
         toTile.piece.tile = fromTile;
         toTile.piece.hasMoved = true;
+
+        if(toTile.piece instanceof Pawn && !isCapture)
+            this.attemptEnPassant(fromCoords, toCoords);
+
+        else if(toTile.piece instanceof King)
+            this.attemptCastling(fromCoords, toCoords);
+    }
+
+    /** Moves the given rook if the move performed on the given coordinates was castling */
+    private attemptCastling(fromCoords: ICoordinates, toCoords: ICoordinates): void {
+        const dFile = toCoords.file - fromCoords.file;
+        if(Math.abs(dFile) === 2) {
+            if(dFile > 0)
+                this.movePiece(
+                    Board.addCoordinates(fromCoords, {rank: 0, file: 3}),
+                    Board.addCoordinates(fromCoords, {rank: 0, file: 1})
+                );
+            else
+                this.movePiece(
+                    Board.addCoordinates(fromCoords, {rank: 0, file: -4}),
+                    Board.addCoordinates(fromCoords, {rank: 0, file: -1})
+                );
+        }
+    }
+
+    /** Captures the correct pawn if the move performed on the given coordinates was en passant */
+    private attemptEnPassant(fromCoords: ICoordinates, toCoords: ICoordinates): void {
+        const dRank = fromCoords.rank - toCoords.rank;
+        const dFile = fromCoords.file - toCoords.file;
+        if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
+
+            // console.log(Board.addCoordinates(
+            //     toCoords, 
+            //     {rank: dRank, file: 0}
+            // ))
+
+            this.getTile(Board.addCoordinates(
+                toCoords, 
+                {rank: dRank, file: 0}
+            )).piece = null; 
     }
 
     /** Checks whether the tile at the given coordinates is accessible by a king of given color */
