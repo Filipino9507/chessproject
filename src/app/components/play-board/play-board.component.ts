@@ -15,29 +15,35 @@ export class PlayBoardComponent implements OnInit {
 
     public board: Board;
     public secondsLeft: PieceColor[];
-    public activePlayerColor: PieceColor;
 
-    private selectedTile: ITile;
-    private selectedTilePossibilities: ICoordinates[];
+    private _activePlayerColor: PieceColor;
+    private _selectedTile: ITile;
+    private _selectedTilePossibilities: ICoordinates[];
+    private _moveCount: number;
 
     @Input() public gameSettings: IGameSettings;
 
     public constructor() { }
 
     public ngOnInit(): void {
-        this.activePlayerColor = PieceColor.WHITE;
-        this.selectedTile = null;
-        this.selectedTilePossibilities = null;
+        this._initializeFields();
         this.board = new Board();
-        this.initializeTimer();
+        this._initializeTimer();
     }
 
-    public initializeTimer(): void {
+    private _initializeFields(): void {
+        this._activePlayerColor = PieceColor.WHITE;
+        this._selectedTile = null;
+        this._selectedTilePossibilities = null;
+        this._moveCount = 0;
+    }
+
+    private _initializeTimer(): void {
         this.secondsLeft = new Array(2);
         this.secondsLeft.fill(this.gameSettings.secondsToThink);
         setInterval(_ => {
-        --this.secondsLeft[this.activePlayerColor];
-        if(this.secondsLeft[this.activePlayerColor] <= 0) {
+        --this.secondsLeft[this._activePlayerColor];
+        if(this.secondsLeft[this._activePlayerColor] <= 0) {
             // EMIT SIGNAL TO END THE GAME
             clearInterval();
         }
@@ -45,7 +51,7 @@ export class PlayBoardComponent implements OnInit {
     }
 
     public clickTile(coords: ICoordinates): void {
-        if(this.selectedTile == null)
+        if(this._selectedTile == null)
             this.attemptInitiateMove(coords);   
         else 
             this.attemptExecuteMove(coords);
@@ -53,35 +59,35 @@ export class PlayBoardComponent implements OnInit {
 
     private attemptInitiateMove(coords): void {
         const fromTile = this.board.getTile(coords);
-        if(fromTile.piece != null && fromTile.piece.color === this.activePlayerColor) {
-            this.selectedTile = fromTile;
-            this.selectedTilePossibilities = fromTile.piece.generatePossibleMoves(this.board, coords);
-            this.board.highlightSquares(this.selectedTilePossibilities);
+        if(fromTile.piece != null && fromTile.piece.color === this._activePlayerColor) {
+            this._selectedTile = fromTile;
+            this._selectedTilePossibilities = fromTile.piece.generatePossibleMoves(this.board, coords);
+            this.board.highlightSquares(this._selectedTilePossibilities);
         }
     }
 
     private attemptExecuteMove(coords): void {
         const toTile = this.board.getTile(coords);
         const hasSameColorPiece = toTile.piece != null && 
-            toTile.piece.color === this.activePlayerColor;
+            toTile.piece.color === this._activePlayerColor;
 
-        if(Board.areCoordinatesInArray(coords, this.selectedTilePossibilities) && !hasSameColorPiece) {
-            this.board.movePiece(this.selectedTile.coords, coords);
+        if(Board.areCoordinatesInArray(coords, this._selectedTilePossibilities) && !hasSameColorPiece) {
+            this.board.movePiece(this._selectedTile.coords, coords, true);
             this.board.updateThreatMoves();
             this.passTurn();
         }
 
         this.board.clearHighlightedSquares();
-        if(hasSameColorPiece && toTile !== this.selectedTile) {
+        if(hasSameColorPiece && toTile !== this._selectedTile) {
             this.attemptInitiateMove(coords);
         } else {
-            this.selectedTile = null;
-            this.selectedTilePossibilities = null;
+            this._selectedTile = null;
+            this._selectedTilePossibilities = null;
         }
     }
 
     private passTurn(): void {
-        this.activePlayerColor = this.activePlayerColor === PieceColor.WHITE ? 
+        this._activePlayerColor = this._activePlayerColor === PieceColor.WHITE ? 
             PieceColor.BLACK : PieceColor.WHITE;
     }
 }

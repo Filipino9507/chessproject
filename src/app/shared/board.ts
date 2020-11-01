@@ -19,10 +19,13 @@ export class Board {
     /** The board */
     private _tileArray: ITile[][];
 
+    private _moveCount: number;
+
     /** Constructor */
     constructor() {
         this._initializeTileArray();
         this.updateThreatMoves();
+        this._moveCount = 0;
     }
 
     /** Returns the tile specified by the given coordinates */
@@ -104,11 +107,15 @@ export class Board {
         }
     }
 
-    /** Moves a piece from one set of coordinates to another */
-    public movePiece(fromCoords: ICoordinates, toCoords: ICoordinates): void {
+    /** Moves a piece from one tile to another */
+    public movePiece(
+        fromCoords: ICoordinates,  
+        toCoords: ICoordinates, 
+        incrementMoveCount?: boolean
+    ): void {
         const fromTile = this.getTile(fromCoords);
         const toTile = this.getTile(toCoords);
-        const isCapture = toTile.piece != null;
+        const isCapture = this.getTile(toCoords).piece != null;
 
         toTile.piece = fromTile.piece;
         fromTile.piece = null;
@@ -116,15 +123,21 @@ export class Board {
         toTile.piece.tile = fromTile;
         toTile.piece.hasMoved = true;
 
-        if(toTile.piece instanceof Pawn && !isCapture)
-            this.attemptEnPassant(fromCoords, toCoords);
+        if(incrementMoveCount)
+            this._moveCount++;
+
+        if(toTile.piece instanceof Pawn && Math.abs(fromCoords.rank - toCoords.rank) === 2)
+            toTile.piece.firstRowMoveNumber = this._moveCount;
+
+        else if(toTile.piece instanceof Pawn && !isCapture)
+            this._attemptEnPassant(fromCoords, toCoords);
 
         else if(toTile.piece instanceof King)
-            this.attemptCastling(fromCoords, toCoords);
+            this._attemptCastling(fromCoords, toCoords);
     }
 
     /** Moves the given rook if the move performed on the given coordinates was castling */
-    private attemptCastling(fromCoords: ICoordinates, toCoords: ICoordinates): void {
+    private _attemptCastling(fromCoords: ICoordinates, toCoords: ICoordinates): void {
         const dFile = toCoords.file - fromCoords.file;
         if(Math.abs(dFile) === 2) {
             if(dFile > 0)
@@ -141,20 +154,15 @@ export class Board {
     }
 
     /** Captures the correct pawn if the move performed on the given coordinates was en passant */
-    private attemptEnPassant(fromCoords: ICoordinates, toCoords: ICoordinates): void {
+    private _attemptEnPassant(fromCoords: ICoordinates, toCoords: ICoordinates): void {
         const dRank = fromCoords.rank - toCoords.rank;
         const dFile = fromCoords.file - toCoords.file;
         if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
-
-            // console.log(Board.addCoordinates(
-            //     toCoords, 
-            //     {rank: dRank, file: 0}
-            // ))
-
             this.getTile(Board.addCoordinates(
                 toCoords, 
                 {rank: dRank, file: 0}
-            )).piece = null; 
+            ))
+            .piece = null; 
     }
 
     /** Checks whether the tile at the given coordinates is accessible by a king of given color */
@@ -169,6 +177,11 @@ export class Board {
     /** Getter for _tileArray */
     public get tileArray(): ITile[][] {
         return this._tileArray;
+    }
+
+    /** Getter for _moveCount */
+    public get moveCount(): number {
+        return this._moveCount;
     }
 
     // #region STATIC

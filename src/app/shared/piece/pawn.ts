@@ -7,6 +7,7 @@ export class Pawn extends Piece {
 
     protected readonly _symbols = ['♙', '♟'];
     protected readonly _value = 1;
+    protected _firstRowMoveNumber = 0;
 
     private _generateNormalMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
@@ -54,7 +55,9 @@ export class Pawn extends Piece {
             Board.addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
         ]) {
             const maybePawn = board.getTile({rank: fromCoords.rank, file: toCoords.file}).piece;
-            if(maybePawn != null && maybePawn instanceof Pawn)
+            if(maybePawn != null && 
+                maybePawn instanceof Pawn && 
+                maybePawn.firstRowMoveNumber === board.moveCount)
                 moves.push(toCoords);
         }
 
@@ -74,5 +77,13 @@ export class Pawn extends Piece {
 
     public movementDirection(): 1 | -1 {
         return this._color === PieceColor.WHITE ? -1 : 1;
+    }
+
+    public get firstRowMoveNumber(): number {
+        return this._firstRowMoveNumber;
+    }
+
+    public set firstRowMoveNumber(value: number) {
+        this._firstRowMoveNumber = value;
     }
 }

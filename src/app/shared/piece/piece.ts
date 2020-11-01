@@ -67,12 +67,12 @@ export abstract class Piece {
         return this._hasMoved;
     }
 
-    public set hasMoved(hasMoved: boolean) {
-        this._hasMoved = hasMoved;
+    public set hasMoved(value: boolean) {
+        this._hasMoved = value;
     }
 
-    public set tile(tile: ITile) {
-        this._tile = tile;
+    public set tile(value: ITile) {
+        this._tile = value;
     }
 
     public get symbol(): string {
