@@ -1,5 +1,6 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { ITile, ICoordinates } from '@app/shared/tile';
+import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
 import { Knight } from '@app/shared/piece/knight';
 import { Bishop } from '@app/shared/piece/bishop';
@@ -120,49 +121,69 @@ export class Board {
         toTile.piece = fromTile.piece;
         fromTile.piece = null;
 
-        toTile.piece.tile = fromTile;
-        toTile.piece.hasMoved = true;
+        const movedPiece = toTile.piece;
+
+        movedPiece.tile = fromTile;
+        movedPiece.hasMoved = true;
 
         if(incrementMoveCount)
             this._moveCount++;
 
-        if(toTile.piece instanceof Pawn && Math.abs(fromCoords.rank - toCoords.rank) === 2)
-            toTile.piece.firstRowMoveNumber = this._moveCount;
-
-        else if(toTile.piece instanceof Pawn && !isCapture)
-            this._attemptEnPassant(fromCoords, toCoords);
-
-        else if(toTile.piece instanceof King)
-            this._attemptCastling(fromCoords, toCoords);
+        this._markPawnFirstRowMoveFlag(fromCoords, toCoords, movedPiece);
+        this._attemptEnPassant(fromCoords, toCoords, movedPiece, isCapture);
+        this._attemptCastling(fromCoords, toCoords, movedPiece);
     }
 
     /** Moves the given rook if the move performed on the given coordinates was castling */
-    private _attemptCastling(fromCoords: ICoordinates, toCoords: ICoordinates): void {
-        const dFile = toCoords.file - fromCoords.file;
-        if(Math.abs(dFile) === 2) {
-            if(dFile > 0)
-                this.movePiece(
-                    Board.addCoordinates(fromCoords, {rank: 0, file: 3}),
-                    Board.addCoordinates(fromCoords, {rank: 0, file: 1})
-                );
-            else
-                this.movePiece(
-                    Board.addCoordinates(fromCoords, {rank: 0, file: -4}),
-                    Board.addCoordinates(fromCoords, {rank: 0, file: -1})
-                );
+    private _attemptCastling(
+        fromCoords: ICoordinates, 
+        toCoords: ICoordinates, 
+        movedPiece: Piece
+    ): void {
+        if(movedPiece instanceof King) {
+            const dFile = toCoords.file - fromCoords.file;
+            if(Math.abs(dFile) === 2) {
+                if(dFile > 0)
+                    this.movePiece(
+                        Board.addCoordinates(fromCoords, {rank: 0, file: 3}),
+                        Board.addCoordinates(fromCoords, {rank: 0, file: 1})
+                    );
+                else
+                    this.movePiece(
+                        Board.addCoordinates(fromCoords, {rank: 0, file: -4}),
+                        Board.addCoordinates(fromCoords, {rank: 0, file: -1})
+                    );
+            }
         }
     }
 
     /** Captures the correct pawn if the move performed on the given coordinates was en passant */
-    private _attemptEnPassant(fromCoords: ICoordinates, toCoords: ICoordinates): void {
-        const dRank = fromCoords.rank - toCoords.rank;
-        const dFile = fromCoords.file - toCoords.file;
-        if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
-            this.getTile(Board.addCoordinates(
-                toCoords, 
-                {rank: dRank, file: 0}
-            ))
-            .piece = null; 
+    private _attemptEnPassant(
+        fromCoords: ICoordinates, 
+        toCoords: ICoordinates,
+        movedPiece: Piece,
+        isCapture: Boolean
+    ): void {
+        if(movedPiece instanceof Pawn && !isCapture) {
+            const dRank = fromCoords.rank - toCoords.rank;
+            const dFile = fromCoords.file - toCoords.file;
+            if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
+                this.getTile(Board.addCoordinates(
+                    toCoords, 
+                    {rank: dRank, file: 0}
+                ))
+                .piece = null;
+        }    
+    }
+
+    /** Marks the pawn first row move flag if it has been done */
+    private _markPawnFirstRowMoveFlag(
+        fromCoords: ICoordinates, 
+        toCoords: ICoordinates, 
+        movedPiece: Piece
+    ): void {
+        if(movedPiece instanceof Pawn && Math.abs(fromCoords.rank - toCoords.rank) === 2)
+            movedPiece.firstRowMoveNumber = this._moveCount;
     }
 
     /** Checks whether the tile at the given coordinates is accessible by a king of given color */
