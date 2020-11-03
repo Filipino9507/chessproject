@@ -19,9 +19,10 @@ export abstract class Piece {
     protected abstract _generateMoves(board: Board, fromCoords: ICoordinates): ICoordinates[];
 
     public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return this._generateMoves(board, fromCoords).filter((coords) => {
-            const piece = board.getTile(coords).piece;
-            return piece == null || piece.color !== this._color;
+        return this._generateMoves(board, fromCoords).filter((toCoords) => {
+            const piece = board.getTile(toCoords).piece;
+            return (piece == null || piece.color !== this._color)
+                && board.isKingSafeAfterMove(fromCoords, toCoords);
         });
     }
 

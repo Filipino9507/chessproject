@@ -16,8 +16,7 @@ export class King extends Piece {
             if(dRank === 0 && dFile === 0) continue;
 
             const toCoords = Board.addCoordinates(fromCoords, {file: dFile, rank: dRank});
-            if(Board.contains(toCoords) && 
-                (board.accessibleByKing(toCoords, this._color) || canBeThreatened))
+            if(Board.contains(toCoords))
                 moves.push(toCoords);
         }
         return moves;

@@ -20,6 +20,7 @@ export class Board {
     /** The board */
     private _tileArray: ITile[][];
 
+    /** Holds the current move count */
     private _moveCount: number;
 
     /** Constructor */
@@ -117,6 +118,30 @@ export class Board {
         return true;
     }
 
+    public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
+        const movingPiece = this.getTile(fromCoords).piece;
+        let safeKing = true;
+
+        movingPiece.move(this, toCoords);
+        this.updateThreatMoves();
+
+        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
+                const coords: ICoordinates = {rank, file};
+                const maybeKing = this.getTile(coords).piece;
+                if(maybeKing != null && maybeKing instanceof King &&
+                    maybeKing.color === movingPiece.color &&
+                    !this.accessibleByKing(coords, movingPiece.color))
+                        safeKing = false;
+            }
+        }
+
+        movingPiece.move(this, fromCoords);
+        // this.updateThreatMoves();
+
+        return safeKing;
+    }
+
     /** Getter for _tileArray */
     public get tileArray(): ITile[][] {
         return this._tileArray;
@@ -162,7 +187,6 @@ export class Board {
                 return true;
         return false;
     }
-
     // #endregion
 
  }
