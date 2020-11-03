@@ -59,6 +59,17 @@ export abstract class Piece {
         return moves;
     }
 
+    public move(board: Board, toCoords: ICoordinates): void {
+        const fromTile = this._tile;
+        const toTile = board.getTile(toCoords);
+
+        toTile.piece = fromTile.piece;
+        fromTile.piece = null;
+
+        this._tile = toTile;
+        this._hasMoved = true;
+    }
+
     public get color(): PieceColor {
         return this._color;
     }

@@ -8,7 +8,7 @@ export class King extends Piece {
     protected readonly _symbols = ['♔', '♚'];
     protected readonly _value = Infinity;
 
-    private generateKingMoves(board: Board, fromCoords: ICoordinates, canBeThreatened: boolean): ICoordinates[] {
+    private _generateKingMoves(board: Board, fromCoords: ICoordinates, canBeThreatened: boolean): ICoordinates[] {
         let moves: ICoordinates[] = [];
 
         for(let dRank = -1; dRank <= 1; dRank++)
@@ -23,7 +23,7 @@ export class King extends Piece {
         return moves;
     }
 
-    private generateCastlingMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
+    private _generateCastlingMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         if(this._hasMoved) 
             return []; 
         let moves: ICoordinates[] = [];
@@ -51,11 +51,30 @@ export class King extends Piece {
     }
 
     protected _generateMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return this.generateKingMoves(board, fromCoords, false)
-            .concat(this.generateCastlingMoves(board, fromCoords));
+        return this._generateKingMoves(board, fromCoords, false)
+            .concat(this._generateCastlingMoves(board, fromCoords));
     }
 
     public generateThreatMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
-        return this.generateKingMoves(board, fromCoords, true);
+        return this._generateKingMoves(board, fromCoords, true);
+    }
+
+    public move(board: Board, toCoords: ICoordinates): void {
+        this._attemptCastling(board, toCoords);
+        super.move(board, toCoords);
+    }
+
+    private _attemptCastling(board: Board, toCoords: ICoordinates): void {
+        const fromCoords = this._tile.coords;
+        const dFile = toCoords.file - fromCoords.file;
+        if(Math.abs(dFile) === 2) {
+            if(dFile > 0) {
+                const rook = board.getTile(Board.addCoordinates(fromCoords, {rank: 0, file: 3})).piece;
+                rook.move(board, Board.addCoordinates(fromCoords, {rank: 0, file: 1}));
+            } else {
+                const rook = board.getTile(Board.addCoordinates(fromCoords, {rank: 0, file: -4})).piece;
+                rook.move(board, Board.addCoordinates(fromCoords, {rank: 0, file: -1}));
+            }
+        }
     }
 }

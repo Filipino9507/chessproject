@@ -108,84 +108,6 @@ export class Board {
         }
     }
 
-    /** Moves a piece from one tile to another */
-    public movePiece(
-        fromCoords: ICoordinates,  
-        toCoords: ICoordinates, 
-        incrementMoveCount?: boolean
-    ): void {
-        const fromTile = this.getTile(fromCoords);
-        const toTile = this.getTile(toCoords);
-        const isCapture = this.getTile(toCoords).piece != null;
-
-        toTile.piece = fromTile.piece;
-        fromTile.piece = null;
-
-        const movedPiece = toTile.piece;
-
-        movedPiece.tile = fromTile;
-        movedPiece.hasMoved = true;
-
-        if(incrementMoveCount)
-            this._moveCount++;
-
-        this._markPawnFirstRowMoveFlag(fromCoords, toCoords, movedPiece);
-        this._attemptEnPassant(fromCoords, toCoords, movedPiece, isCapture);
-        this._attemptCastling(fromCoords, toCoords, movedPiece);
-    }
-
-    /** Moves the given rook if the move performed on the given coordinates was castling */
-    private _attemptCastling(
-        fromCoords: ICoordinates, 
-        toCoords: ICoordinates, 
-        movedPiece: Piece
-    ): void {
-        if(movedPiece instanceof King) {
-            const dFile = toCoords.file - fromCoords.file;
-            if(Math.abs(dFile) === 2) {
-                if(dFile > 0)
-                    this.movePiece(
-                        Board.addCoordinates(fromCoords, {rank: 0, file: 3}),
-                        Board.addCoordinates(fromCoords, {rank: 0, file: 1})
-                    );
-                else
-                    this.movePiece(
-                        Board.addCoordinates(fromCoords, {rank: 0, file: -4}),
-                        Board.addCoordinates(fromCoords, {rank: 0, file: -1})
-                    );
-            }
-        }
-    }
-
-    /** Captures the correct pawn if the move performed on the given coordinates was en passant */
-    private _attemptEnPassant(
-        fromCoords: ICoordinates, 
-        toCoords: ICoordinates,
-        movedPiece: Piece,
-        isCapture: Boolean
-    ): void {
-        if(movedPiece instanceof Pawn && !isCapture) {
-            const dRank = fromCoords.rank - toCoords.rank;
-            const dFile = fromCoords.file - toCoords.file;
-            if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
-                this.getTile(Board.addCoordinates(
-                    toCoords, 
-                    {rank: dRank, file: 0}
-                ))
-                .piece = null;
-        }    
-    }
-
-    /** Marks the pawn first row move flag if it has been done */
-    private _markPawnFirstRowMoveFlag(
-        fromCoords: ICoordinates, 
-        toCoords: ICoordinates, 
-        movedPiece: Piece
-    ): void {
-        if(movedPiece instanceof Pawn && Math.abs(fromCoords.rank - toCoords.rank) === 2)
-            movedPiece.firstRowMoveNumber = this._moveCount;
-    }
-
     /** Checks whether the tile at the given coordinates is accessible by a king of given color */
     public accessibleByKing(coords: ICoordinates, kingColor: PieceColor): boolean {
         for(let piece of this.getTile(coords).threatenedBy) {
@@ -205,6 +127,11 @@ export class Board {
         return this._moveCount;
     }
 
+    /** Setter for _moveCount */
+    public set moveCount(value: number) {
+        this._moveCount = value;
+    } 
+
     // #region STATIC
 
     /** Check whether the given coordinates exist within the board */
@@ -214,7 +141,7 @@ export class Board {
     }
 
     /** Returns whether two coordinates are equal */
-    public static areEqual(coords1: ICoordinates, coords2: ICoordinates): boolean {
+    public static areCoordinatesEqual(coords1: ICoordinates, coords2: ICoordinates): boolean {
         return coords1.rank === coords2.rank && coords1.file === coords2.file;
     }
 
@@ -230,9 +157,9 @@ export class Board {
 
     /** Checks whether an array contains given coordinates */
     public static areCoordinatesInArray(coords: ICoordinates, array: ICoordinates[]): boolean {
-        for(let elt of array) {
-            if(Board.areEqual(elt, coords)) return true;
-        }
+        for(let elt of array)
+            if(Board.areCoordinatesEqual(elt, coords)) 
+                return true;
         return false;
     }
 

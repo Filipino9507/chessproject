@@ -49,7 +49,7 @@ export class Pawn extends Piece {
     private _generateEnPassantMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
 
-        if(this._tile.coords.rank === 4 - this._color)
+        if(fromCoords.rank === 3 + this._color)
         for(let toCoords of [
             Board.addCoordinates(fromCoords, {file: 1, rank: this.movementDirection()}),
             Board.addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
@@ -57,10 +57,9 @@ export class Pawn extends Piece {
             const maybePawn = board.getTile({rank: fromCoords.rank, file: toCoords.file}).piece;
             if(maybePawn != null && 
                 maybePawn instanceof Pawn && 
-                maybePawn.firstRowMoveNumber === board.moveCount)
+                maybePawn.firstRowMoveNumber + 1 === board.moveCount)
                 moves.push(toCoords);
         }
-
         return moves;
     }
 
@@ -77,6 +76,29 @@ export class Pawn extends Piece {
 
     public movementDirection(): 1 | -1 {
         return this._color === PieceColor.WHITE ? -1 : 1;
+    }
+
+    public move(board: Board, toCoords: ICoordinates): void {
+        this._markFirstRowMove(board, toCoords);
+        this._attemptEnPassant(board, toCoords);
+        super.move(board, toCoords);
+    }
+
+    private _attemptEnPassant(board: Board, toCoords: ICoordinates): void {
+        const fromCoords = this._tile.coords;
+        const isCapture = board.getTile(toCoords).piece != null;
+        if(!isCapture) {
+            const dRank = fromCoords.rank - toCoords.rank;
+            const dFile = fromCoords.file - toCoords.file;
+            if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
+                board.getTile(Board.addCoordinates(toCoords, {rank: dRank, file: 0})).piece = null;
+        }    
+    }
+
+    private _markFirstRowMove(board: Board, toCoords: ICoordinates): void {
+        if(Math.abs(this._tile.coords.rank - toCoords.rank) === 2)
+            console.log(board.moveCount);
+            this.firstRowMoveNumber = board.moveCount;
     }
 
     public get firstRowMoveNumber(): number {
