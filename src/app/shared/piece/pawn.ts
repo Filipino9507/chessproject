@@ -97,7 +97,6 @@ export class Pawn extends Piece {
 
     private _markFirstRowMove(board: Board, toCoords: ICoordinates): void {
         if(Math.abs(this._tile.coords.rank - toCoords.rank) === 2)
-            console.log(board.moveCount);
             this.firstRowMoveNumber = board.moveCount;
     }
 

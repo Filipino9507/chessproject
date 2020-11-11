@@ -118,33 +118,83 @@ export class Board {
         return true;
     }
 
+    /** Checks if king is safe after the said move */
     public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
-        const movingPiece = this.getTile(fromCoords).piece;
+        const testBoard = Board.getDeepCopy(this);
+        const movingPiece = testBoard.getTile(fromCoords).piece;
         let safeKing = true;
 
-        movingPiece.move(this, toCoords);
-        this.updateThreatMoves();
+        movingPiece.move(testBoard, toCoords);
+        testBoard.updateThreatMoves();
 
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const coords: ICoordinates = {rank, file};
-                const maybeKing = this.getTile(coords).piece;
+                const maybeKing = testBoard.getTile(coords).piece;
                 if(maybeKing != null && maybeKing instanceof King &&
                     maybeKing.color === movingPiece.color &&
-                    !this.accessibleByKing(coords, movingPiece.color))
+                    !testBoard.accessibleByKing(coords, movingPiece.color)) {
                         safeKing = false;
+                    }      
             }
         }
-
-        movingPiece.move(this, fromCoords);
-        // this.updateThreatMoves();
-
         return safeKing;
+    }
+
+    /** Gets a deepcopy of a board */
+    public static getDeepCopy(board: Board): Board {
+        const prevTileArray = board.tileArray;
+        
+        let newBoard = new Board();
+        const newTileArray = new Array(Board.BOARD_DIMEN);
+        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+
+            const newRank = new Array(Board.BOARD_DIMEN);
+            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
+                
+                const piece = prevTileArray[rank][file].piece;
+                let newPiece: Piece;
+
+                if(piece == null)
+                    newPiece = null;
+                else if(piece instanceof Pawn)
+                    newPiece = new Pawn(piece.color);   
+                else if(piece instanceof Knight)
+                    newPiece = new Knight(piece.color);
+                else if(piece instanceof Bishop)
+                    newPiece = new Bishop(piece.color);
+                else if(piece instanceof Rook)
+                    newPiece = new Rook(piece.color);
+                else if(piece instanceof Queen)
+                    newPiece = new Queen(piece.color);
+                else if(piece instanceof King)
+                    newPiece = new King(piece.color);
+
+                newRank[file] = {
+                    coords: {file, rank}, 
+                    highlighted: false, 
+                    piece: newPiece,
+                    threatenedBy: new Set()
+                };
+
+                if(piece != null)
+                    newRank[file].piece.tile = newRank[file];
+            }
+            newTileArray[rank] = newRank;
+        }
+        newBoard.tileArray = newTileArray;
+
+        return newBoard;
     }
 
     /** Getter for _tileArray */
     public get tileArray(): ITile[][] {
         return this._tileArray;
+    }
+
+    /** Setter for _tileArray */
+    public set tileArray(value: ITile[][]) {
+        this._tileArray = value;
     }
 
     /** Getter for _moveCount */
