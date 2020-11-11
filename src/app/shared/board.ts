@@ -1,5 +1,5 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
-import { ITile, ICoordinates } from '@app/shared/tile';
+import { ITile, ICoordinates, IFullMove } from '@app/shared/tile';
 import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
 import { Knight } from '@app/shared/piece/knight';
@@ -109,6 +109,23 @@ export class Board {
         }
     }
 
+    /** Returns all of the possible moves for the player of the given color */
+    public generateAllPossibleMoves(playerColor: PieceColor): IFullMove[] {
+        let fullMoves: IFullMove[] = [];
+        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
+                const fromCoords: ICoordinates = {rank, file};
+                const piece = this.getTile(fromCoords).piece;
+                if(piece != null && piece.color === playerColor) {
+                    for(const toCoords of piece.generatePossibleMoves(this, fromCoords)) {
+                        fullMoves.push({fromCoords, toCoords});
+                    }
+                }
+            }
+        }
+        return fullMoves;
+    }
+
     /** Checks whether the tile at the given coordinates is accessible by a king of given color */
     public accessibleByKing(coords: ICoordinates, kingColor: PieceColor): boolean {
         for(let piece of this.getTile(coords).threatenedBy) {
@@ -118,22 +135,16 @@ export class Board {
         return true;
     }
 
-    /** Checks if king is safe after the said move */
-    public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
-        const testBoard = Board.getDeepCopy(this);
-        const movingPiece = testBoard.getTile(fromCoords).piece;
+    /** Checks if king of a given color is safe on a given board */
+    public static isKingSafeOnBoard(board: Board, kingColor: PieceColor): boolean {
         let safeKing = true;
-
-        movingPiece.move(testBoard, toCoords);
-        testBoard.updateThreatMoves();
-
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const coords: ICoordinates = {rank, file};
-                const maybeKing = testBoard.getTile(coords).piece;
+                const maybeKing = board.getTile(coords).piece;
                 if(maybeKing != null && maybeKing instanceof King &&
-                    maybeKing.color === movingPiece.color &&
-                    !testBoard.accessibleByKing(coords, movingPiece.color)) {
+                    maybeKing.color === kingColor &&
+                    !board.accessibleByKing(coords, kingColor)) {
                         safeKing = false;
                     }      
             }
@@ -141,9 +152,20 @@ export class Board {
         return safeKing;
     }
 
-    /** Gets a deepcopy of a board */
-    public static getDeepCopy(board: Board): Board {
-        const prevTileArray = board.tileArray;
+    /** Checks if king is safe after the said move */
+    public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
+        const testBoard = this.copy();
+        const movingPiece = testBoard.getTile(fromCoords).piece;
+
+        movingPiece.move(testBoard, toCoords);
+        testBoard.updateThreatMoves();
+
+        return Board.isKingSafeOnBoard(testBoard, movingPiece.color);
+    }
+
+    /** Returns a deep copy of the board */
+    public copy(): Board {
+        const prevTileArray = this.tileArray;
         
         let newBoard = new Board();
         const newTileArray = new Array(Board.BOARD_DIMEN);

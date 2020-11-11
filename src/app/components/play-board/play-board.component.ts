@@ -42,11 +42,11 @@ export class PlayBoardComponent implements OnInit {
         this.secondsLeft = new Array(2);
         this.secondsLeft.fill(this.gameSettings.secondsToThink);
         setInterval(_ => {
-        --this.secondsLeft[this._activePlayerColor];
-        if(this.secondsLeft[this._activePlayerColor] <= 0) {
-            // EMIT SIGNAL TO END THE GAME
-            clearInterval();
-        }
+            --this.secondsLeft[this._activePlayerColor];
+            if(this.secondsLeft[this._activePlayerColor] <= 0) {
+                // EMIT SIGNAL TO END THE GAME
+                clearInterval();
+            }
         }, 1000);
     }
 
@@ -79,6 +79,8 @@ export class PlayBoardComponent implements OnInit {
         }
 
         this.board.clearHighlightedSquares();
+        this.handleGameEnd();
+
         if(hasSameColorPiece && toTile !== this._selectedTile) {
             this.attemptInitiateMove(coords);
         } else {
@@ -90,5 +92,16 @@ export class PlayBoardComponent implements OnInit {
     private passTurn(): void {
         this._activePlayerColor = this._activePlayerColor === PieceColor.WHITE ? 
             PieceColor.BLACK : PieceColor.WHITE;
+    }
+
+    private handleGameEnd(): void {
+        const allPossibleMoves = this.board.generateAllPossibleMoves(this._activePlayerColor);
+        if(allPossibleMoves.length === 0) {
+            console.log('GAME END');
+            if(Board.isKingSafeOnBoard(this.board, this._activePlayerColor)) 
+                console.log('STALEMATE');
+            else
+                console.log('CHECKMATE');
+        }
     }
 }
