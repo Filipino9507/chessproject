@@ -74,7 +74,7 @@ export class PlayBoardComponent implements OnInit {
         if(Board.areCoordinatesInArray(coords, this._selectedTilePossibilities) && !hasSameColorPiece) {
             this._selectedTile.piece.move(this.board, coords);
             this.board.moveCount++;
-            // this.board.updateThreatMoves();
+            this.board.updateThreatMoves();
             this.passTurn();
         }
 
