@@ -8,6 +8,8 @@ import { Rook } from '@app/shared/piece/rook';
 import { Queen } from '@app/shared/piece/queen';
 import { King } from '@app/shared/piece/king';
 
+import { NbDialogService } from '@nebular/theme'
+
 /**
  * Class holding the board array, its associated methods and utility methods for
  * working with tiles and coordinates

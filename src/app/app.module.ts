@@ -9,7 +9,8 @@ import {
   NbSidebarModule, 
   NbMenuModule, 
   NbButtonModule,
-  NbSelectModule
+  NbSelectModule,
+  NbDialogModule
 } from '@nebular/theme';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +27,8 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { AboutComponent } from './pages/about/about.component';
 import { PlayOptionsComponent } from './components/play-options/play-options.component';
 import { PlayBoardComponent } from './components/play-board/play-board.component';
+import { PromotionDialogComponent } from './components/promotion-dialog/promotion-dialog.component';
+import { PlayEndGameComponent } from './components/play-end-game/play-end-game.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +40,8 @@ import { PlayBoardComponent } from './components/play-board/play-board.component
     AboutComponent,
     PlayOptionsComponent,
     PlayBoardComponent,
+    PromotionDialogComponent,
+    PlayEndGameComponent
   ],
   imports: [
     BrowserModule,
@@ -46,6 +51,7 @@ import { PlayBoardComponent } from './components/play-board/play-board.component
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbThemeModule.forRoot({ name: 'dark' }),
+    NbDialogModule.forRoot(),
     NbLayoutModule,
     NbCardModule,
     NbButtonModule,

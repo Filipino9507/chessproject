@@ -1,7 +1,7 @@
 <div class="center-content">
 
     <div class="board-container">
-        <div class="board-row" *ngFor="let _ of board.tileArray; let rank = index">
+        <div class="board-rank" *ngFor="let _ of board.tileArray; let rank = index">
 
             <!-- TO BE REFACTORED FROM WITHIN .TS FILE -->
             <!-- <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span> -->
@@ -22,7 +22,7 @@
     </div>
 
     <div class="timer-container">
-        <h4 *ngFor="let secs of secondsLeft">
+        <h4 *ngFor="let secs of secondsLeft.reverse()">
             Time left: {{ Math.floor(secs / 60) }}:{{ secs % 60 | number: '2.0-0' }}
         </h4>
     </div>

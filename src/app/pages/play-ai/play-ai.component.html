@@ -1,11 +1,22 @@
 
-<div *ngIf="!gameOn">
+<div *ngIf="gameOn === GameState.PRE_GAME">
     <h1>Game settings</h1>
     <p>Please select your game settings.</p>
 
-    <app-play-options (gameSettingsEventEmitter)="startGame($event)"></app-play-options>
+    <app-play-options 
+        (startGameEventEmitter)="startGame($event)">
+    </app-play-options>
 </div>
 
-<div *ngIf="gameOn">
-    <app-play-board [gameSettings]="gameSettings"></app-play-board>
+<div *ngIf="gameOn === GameState.IN_GAME">
+    <app-play-board 
+        [gameSettings]="gameSettings"
+        (endGameEventEmitter)="endGame($event)">
+    </app-play-board>
+</div>
+
+<div *ngIf="gameOn === GameState.POST_GAME">
+    <app-play-end-game
+        [gameResults]="gameResults">
+    </app-play-end-game>
 </div>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IGameSettings } from '@app/shared/models';
+import { IGameResults } from '@app/shared/game-results';
+import { IGameSettings } from '@app/shared/game-settings';
+import { GameState } from '@app/shared/game-state';
 
 @Component({
   selector: 'app-play-menu',
@@ -7,18 +9,26 @@ import { IGameSettings } from '@app/shared/models';
   styleUrls: ['./play-ai.component.scss']
 })
 export class PlayAIComponent implements OnInit {
+    
+    public GameState = GameState;
 
-  public gameOn: boolean;
-  public gameSettings: IGameSettings;
-  
-  public constructor() { }
+    public gameOn: GameState;
+    public gameSettings: IGameSettings;
+    public gameResults: IGameResults;
 
-  public ngOnInit(): void {
-    this.gameOn = false;
-  }
+    public constructor() { }
 
-  public startGame(gameSettings: IGameSettings) {
-    this.gameSettings = gameSettings;
-    this.gameOn = true;
-  }
+    public ngOnInit(): void {
+        this.gameOn = GameState.PRE_GAME;
+    }
+
+    public startGame(gameSettings: IGameSettings): void {
+        this.gameSettings = gameSettings;
+        this.gameOn = GameState.IN_GAME;
+    }
+
+    public endGame(gameResults: IGameResults): void {
+        this.gameResults = gameResults;
+        this.gameOn = GameState.POST_GAME;
+    }
 }

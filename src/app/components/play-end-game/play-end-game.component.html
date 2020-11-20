@@ -1,0 +1,21 @@
+<nb-card size="small">
+    <nb-card-body class="center-content">        
+
+        <h1>Game results</h1>
+        
+        <div [ngSwitch]="gameResults.reason">
+            <p *ngSwitchCase="GameResultReason.CHECKMATE">Checkmate</p>
+            <p *ngSwitchCase="GameResultReason.TIME_OUT">Won on time</p>
+            <p *ngSwitchCase="GameResultReason.STALEMATE">Stalemate</p>
+            <p *ngSwitchCase="GameResultReason.REPETITION">Draw by repetition</p>
+            <p *ngSwitchCase="GameResultReason.FIFTY_MOVE_RULE">Draw by fifty-move rule</p>
+        </div>
+
+        <p *ngIf="gameResults.winner != null">
+            Winner: {{ gameResults.winner === PieceColor.WHITE ? 'White': 'Black' }}
+        </p>
+
+        <button nbButton size="giant" status="primary">Continue</button>
+
+    </nb-card-body>
+</nb-card>
