@@ -6,7 +6,7 @@ import { Rook } from './rook';
 export class King extends Piece {
 
     protected readonly _symbols = ['♔', '♚'];
-    protected readonly _value = Infinity;
+    protected readonly _value = 0;
 
     private _generateKingMoves(board: Board, fromCoords: ICoordinates, canBeThreatened: boolean): ICoordinates[] {
         let moves: ICoordinates[] = [];

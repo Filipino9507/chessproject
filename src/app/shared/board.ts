@@ -1,5 +1,5 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
-import { ITile, ICoordinates, IFullMove } from '@app/shared/tile';
+import { ITile, ICoordinates } from '@app/shared/tile';
 import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
 import { Knight } from '@app/shared/piece/knight';
@@ -7,8 +7,6 @@ import { Bishop } from '@app/shared/piece/bishop';
 import { Rook } from '@app/shared/piece/rook';
 import { Queen } from '@app/shared/piece/queen';
 import { King } from '@app/shared/piece/king';
-
-import { NbDialogService } from '@nebular/theme'
 
 /**
  * Class holding the board array, its associated methods and utility methods for
@@ -112,8 +110,10 @@ export class Board {
     }
 
     /** Returns all of the possible moves for the player of the given color */
-    public generateAllPossibleMoves(playerColor: PieceColor): IFullMove[] {
-        let fullMoves: IFullMove[] = [];
+    public generateAllPossibleMoves(playerColor: PieceColor): 
+    {fromCoords: ICoordinates, toCoords: ICoordinates}[] {
+
+        let fullMoves: {fromCoords: ICoordinates, toCoords: ICoordinates}[] = [];
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const fromCoords: ICoordinates = {rank, file};
@@ -137,32 +137,11 @@ export class Board {
         return true;
     }
 
-    /** Checks if king of a given color is safe on a given board */
-    public static isKingSafeOnBoard(board: Board, kingColor: PieceColor): boolean {
-        let safeKing = true;
-        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
-            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
-                const coords: ICoordinates = {rank, file};
-                const maybeKing = board.getTile(coords).piece;
-                if(maybeKing != null && maybeKing instanceof King &&
-                    maybeKing.color === kingColor &&
-                    !board.accessibleByKing(coords, kingColor)) {
-                        safeKing = false;
-                    }      
-            }
-        }
-        return safeKing;
-    }
-
     /** Checks if king is safe after the said move */
     public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
-        const testBoard = this.copy();
-        const movingPiece = testBoard.getTile(fromCoords).piece;
-
-        movingPiece.move(testBoard, toCoords);
-        testBoard.updateThreatMoves();
-
-        return Board.isKingSafeOnBoard(testBoard, movingPiece.color);
+        const color = this.getTile(fromCoords).piece.color;
+        const testBoard = Board.generateBoardAfterMove(this, fromCoords, toCoords);
+        return Board.isKingSafeOnBoard(testBoard, color);
     }
 
     /** Returns a deep copy of the board */
@@ -232,6 +211,33 @@ export class Board {
     } 
 
     // #region STATIC
+
+    /** Checks if king of a given color is safe on a given board */
+    public static isKingSafeOnBoard(board: Board, kingColor: PieceColor): boolean {
+        let safeKing = true;
+        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
+                const coords: ICoordinates = {rank, file};
+                const maybeKing = board.getTile(coords).piece;
+                if(maybeKing != null && maybeKing instanceof King &&
+                    maybeKing.color === kingColor &&
+                    !board.accessibleByKing(coords, kingColor)) {
+                        safeKing = false;
+                    }      
+            }
+        }
+        return safeKing;
+    }
+
+    /** Generates a copy of a board after the given move */
+    public static generateBoardAfterMove(board: Board, fromCoords: ICoordinates, toCoords: ICoordinates): Board {
+        const alternativeBoard = board.copy();
+        const movingPiece = alternativeBoard.getTile(fromCoords).piece;
+        
+        movingPiece.move(alternativeBoard, toCoords);
+        alternativeBoard.updateThreatMoves();
+        return alternativeBoard;
+    }
 
     /** Check whether the given coordinates exist within the board */
     public static contains(coords: ICoordinates): boolean {
