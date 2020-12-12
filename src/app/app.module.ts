@@ -18,23 +18,23 @@ import { AppComponent } from './app.component';
 
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { PagesModule } from './pages/pages.module';
-import { PlayBoardModule } from './components/play-board/play-board.module';
+import { ComponentsModule } from './components/components.module';
 
-import { PlayAIComponent } from './pages/play-ai.component';
+import { PlayComponent } from './pages/play.component';
 import { OptionsComponent } from './pages/options.component';
 import { HomeComponent } from './pages/home.component';
 import { PageNotFoundComponent } from './pages/page-not-found.component';
 import { AboutComponent } from './pages/about.component';
-import { PlayOptionsComponent } from './components/play-options/play-options.component';
-import { PlayBoardComponent } from './components/play-board/play-board.component';
-import { PromotionDialogComponent } from './components/promotion-dialog/promotion-dialog.component';
-import { PlayEndGameComponent } from './components/play-end-game/play-end-game.component';
+import { PlayOptionsComponent } from './components/play-options.component';
+import { PlayBoardComponent } from './components/play-board.component';
+import { PromotionDialogComponent } from './components/promotion-dialog.component';
+import { PlayEndGameComponent } from './components/play-end-game.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     OptionsComponent,
-    PlayAIComponent,
+    PlayComponent,
     HomeComponent,
     PageNotFoundComponent,
     AboutComponent,
@@ -58,7 +58,7 @@ import { PlayEndGameComponent } from './components/play-end-game/play-end-game.c
     NbSelectModule,
     NbEvaIconsModule,
     PagesModule,
-    PlayBoardModule
+    ComponentsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

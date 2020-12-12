@@ -39,7 +39,7 @@ import { GameState } from '@app/shared/game-state';
         }`
     ]
 })
-export class PlayAIComponent implements OnInit {
+export class PlayComponent implements OnInit {
     
     public GameState = GameState;
 
