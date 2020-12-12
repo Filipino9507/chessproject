@@ -21,10 +21,10 @@ export class PlayOptionsComponent implements OnInit {
     
     public ngOnInit(): void {
         this.gameSettings = {
-        difficulty: 2,
-        playerColor: PieceColor.WHITE,
-        secondsToThink: 300,
-        secondsIncrement: 0
+            difficulty: 2,
+            playerColor: PieceColor.WHITE,
+            secondsToThink: 300,
+            secondsIncrement: 0
         };
     }
 
