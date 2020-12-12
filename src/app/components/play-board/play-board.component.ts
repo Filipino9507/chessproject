@@ -11,8 +11,66 @@ import { IGameResults, GameResultReason } from '@app/shared/game-results';
  */
 @Component({
     selector: 'app-play-board',
-    templateUrl: './play-board.component.html',
-    styleUrls: ['./play-board.component.scss']
+    template: `
+        <div class="center-content">
+
+            <div class="board-container">
+                <div class="board-rank" *ngFor="let _ of board.tileArray; let rank = index; let evenRank = even">
+                    <!-- TO BE REFACTORED FROM WITHIN .TS FILE -->
+                    <!-- <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span> -->
+                    <button 
+                    *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
+                    [ngClass]="[
+                        'tile', 
+                        evenRank === evenFile ? 'white-tile' : 'black-tile',
+                        board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
+                    ]"
+                    (click)="clickTile({rank: rank, file: file})">
+                    {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
+                    </button>
+                </div>
+            </div>
+
+            <div class="timer-container">
+                <h4 *ngFor="let secs of secondsLeft.reverse()">
+                    Time left: {{ Math.floor(secs / 60) }}:{{ secs % 60 | number: '2.0-0' }}
+                </h4>
+            </div>
+
+        </div>
+    `,
+    styles: [
+        `div.board-container {
+            margin: 0 auto;
+            display: inline-block;
+        }
+        div.board-rank {
+            height: 75px;
+        }`,
+
+        `button.tile {
+            width: 75px;
+            height: 75px;
+            border: 1px solid black;
+            padding: 0px;
+            font-size: 70px;
+        }
+        button.white-tile {
+            background-color: rgb(155, 248, 255);
+        }
+        button.black-tile {
+            background-color: rgb(28, 115, 150);
+        }
+        button.highlighted-tile {
+            background-color: rgba(255, 0, 0, 0.76);
+        }`,
+        
+        `div.timer-container {
+            margin: 0 auto;
+            padding: 30px;
+            display: inline-block;
+        }`
+    ]
 })
 export class PlayBoardComponent implements OnInit {
 

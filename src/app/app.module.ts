@@ -17,14 +17,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { NbEvaIconsModule } from '@nebular/eva-icons';
-import { PlayAIModule } from './pages/play-ai/play-ai.module';
+import { PagesModule } from './pages/pages.module';
 import { PlayBoardModule } from './components/play-board/play-board.module';
 
-import { PlayAIComponent } from './pages/play-ai/play-ai.component';
-import { OptionsComponent } from './pages/options/options.component';
-import { HomeComponent } from './pages/home/home.component';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { AboutComponent } from './pages/about/about.component';
+import { PlayAIComponent } from './pages/play-ai.component';
+import { OptionsComponent } from './pages/options.component';
+import { HomeComponent } from './pages/home.component';
+import { PageNotFoundComponent } from './pages/page-not-found.component';
+import { AboutComponent } from './pages/about.component';
 import { PlayOptionsComponent } from './components/play-options/play-options.component';
 import { PlayBoardComponent } from './components/play-board/play-board.component';
 import { PromotionDialogComponent } from './components/promotion-dialog/promotion-dialog.component';
@@ -57,7 +57,7 @@ import { PlayEndGameComponent } from './components/play-end-game/play-end-game.c
     NbButtonModule,
     NbSelectModule,
     NbEvaIconsModule,
-    PlayAIModule,
+    PagesModule,
     PlayBoardModule
   ],
   providers: [],
