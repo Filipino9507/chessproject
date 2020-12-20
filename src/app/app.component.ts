@@ -63,7 +63,7 @@ export class AppComponent {
         }
     ];
 
-    public constructor(private readonly sidebarService: NbSidebarService) { }
+    public constructor(private readonly sidebarService: NbSidebarService) {}
 
     public toggleSidebar(): boolean {
         this.sidebarService.toggle();
