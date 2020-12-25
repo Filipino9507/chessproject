@@ -215,7 +215,7 @@ export class Board {
     /** Checks if king of a given color is safe on a given board */
     public static isKingSafeOnBoard(board: Board, kingColor: PieceColor): boolean {
         let safeKing = true;
-        for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+        for (let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const coords: ICoordinates = {rank, file};
                 const maybeKing = board.getTile(coords).piece;
