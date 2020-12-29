@@ -43,8 +43,9 @@ export class Pawn extends Piece {
         ]) {
             if(Board.contains(toCoords)) {
                 const piece = board.getTile(toCoords).piece;
-                if ((piece != null && piece.color !== this._color) || canGoToEmpty)
+                if ((piece != null && piece.color !== this._color) || canGoToEmpty) {
                     moves.push(toCoords);
+                }
             }
         }
         return moves;
@@ -52,17 +53,17 @@ export class Pawn extends Piece {
 
     private _generateEnPassantMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
-
-        if(fromCoords.rank === 3 + this._color)
-        for(let toCoords of [
-            Board.addCoordinates(fromCoords, {file: 1, rank: this.movementDirection()}),
-            Board.addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
-        ]) {
-            const maybePawn = board.getTile({rank: fromCoords.rank, file: toCoords.file}).piece;
-            if(maybePawn != null && 
-                maybePawn instanceof Pawn && 
-                maybePawn.firstRowMoveNumber + 1 === board.moveCount)
-                moves.push(toCoords);
+        if(fromCoords.rank === 3 + this._color) {
+            for(let toCoords of [
+                Board.addCoordinates(fromCoords, {file: 1, rank: this.movementDirection()}),
+                Board.addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
+            ]) {
+                const maybePawn = board.getTile({rank: fromCoords.rank, file: toCoords.file}).piece;
+                if(maybePawn != null && 
+                    maybePawn instanceof Pawn && 
+                    maybePawn.firstRowMoveNumber + 1 === board.moveCount)
+                    moves.push(toCoords);
+            }
         }
         return moves;
     }
