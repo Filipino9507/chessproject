@@ -7,9 +7,6 @@ import { GameState } from '@app/shared/game-state';
     selector: 'app-play-menu',
     template: `
         <div *ngIf="gameOn === GameState.PRE_GAME">
-            <h1>Game settings</h1>
-            <p>Please select your game settings.</p>
-
             <app-play-options 
                 (startGameEventEmitter)="startGame($event)">
             </app-play-options>

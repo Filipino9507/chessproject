@@ -9,6 +9,10 @@ export class Pawn extends Piece {
     protected readonly _value = 1;
     protected _firstRowMoveNumber = 0;
 
+    public copy(): Pawn {
+        return new Pawn(this._color);
+    }
+
     private _generateNormalMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         const toCoords = Board.addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});

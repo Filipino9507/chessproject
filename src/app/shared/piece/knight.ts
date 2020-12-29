@@ -7,6 +7,10 @@ export class Knight extends Piece {
     protected readonly _symbols = ['♘', '♞'];
     protected readonly _value = 3;
 
+    public copy(): Knight {
+        return new Knight(this._color);
+    }
+
     protected _generateMoves(_: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
 

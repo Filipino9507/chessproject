@@ -38,12 +38,9 @@ export class Board {
     /** Initializes the _tileArray with the starting pieces */
     private _initializeTileArray(): void {
         this._tileArray = new Array(Board.BOARD_DIMEN);
-
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             this._tileArray[rank] = new Array(Board.BOARD_DIMEN);
-
             const color = rank > 3 ? PieceColor.WHITE : PieceColor.BLACK;
-
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 let piece;
                 switch(rank) {
@@ -59,14 +56,12 @@ export class Board {
                     case 1: case 6: piece = new Pawn(color); break;
                     default: piece = null;
                 }
-
                 this._tileArray[rank][file] = {
                     coords: {file, rank}, 
                     highlighted: false, 
                     piece: piece,
                     threatenedBy: new Set()
                 };
-
                 if(piece != null)
                     this._tileArray[rank][file].piece.tile = this._tileArray[rank][file];
             }
@@ -112,7 +107,6 @@ export class Board {
     /** Returns all of the possible moves for the player of the given color */
     public generateAllPossibleMoves(playerColor: PieceColor): 
     {fromCoords: ICoordinates, toCoords: ICoordinates}[] {
-
         let fullMoves: {fromCoords: ICoordinates, toCoords: ICoordinates}[] = [];
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
@@ -147,46 +141,25 @@ export class Board {
     /** Returns a deep copy of the board */
     public copy(): Board {
         const prevTileArray = this.tileArray;
-        
         let newBoard = new Board();
         const newTileArray = new Array(Board.BOARD_DIMEN);
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
-
             const newRank = new Array(Board.BOARD_DIMEN);
-            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
-                
+            for(let file = 0; file < Board.BOARD_DIMEN; file++) {        
                 const piece = prevTileArray[rank][file].piece;
-                let newPiece: Piece;
-
-                if(piece == null)
-                    newPiece = null;
-                else if(piece instanceof Pawn)
-                    newPiece = new Pawn(piece.color);   
-                else if(piece instanceof Knight)
-                    newPiece = new Knight(piece.color);
-                else if(piece instanceof Bishop)
-                    newPiece = new Bishop(piece.color);
-                else if(piece instanceof Rook)
-                    newPiece = new Rook(piece.color);
-                else if(piece instanceof Queen)
-                    newPiece = new Queen(piece.color);
-                else if(piece instanceof King)
-                    newPiece = new King(piece.color);
-
+                const newPiece = piece == null ? null : piece.copy();
                 newRank[file] = {
                     coords: {file, rank}, 
                     highlighted: false, 
                     piece: newPiece,
                     threatenedBy: new Set()
                 };
-
                 if(piece != null)
                     newRank[file].piece.tile = newRank[file];
             }
             newTileArray[rank] = newRank;
         }
         newBoard.tileArray = newTileArray;
-
         return newBoard;
     }
 
@@ -233,7 +206,6 @@ export class Board {
     public static generateBoardAfterMove(board: Board, fromCoords: ICoordinates, toCoords: ICoordinates): Board {
         const alternativeBoard = board.copy();
         const movingPiece = alternativeBoard.getTile(fromCoords).piece;
-        
         movingPiece.move(alternativeBoard, toCoords);
         alternativeBoard.updateThreatMoves();
         return alternativeBoard;
@@ -268,6 +240,5 @@ export class Board {
         return false;
     }
     // #endregion
-
  }
  

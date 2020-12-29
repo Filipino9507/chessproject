@@ -8,16 +8,20 @@ export class King extends Piece {
     protected readonly _symbols = ['♔', '♚'];
     protected readonly _value = 0;
 
+    public copy(): King {
+        return new King(this._color);
+    }
+
     private _generateKingMoves(board: Board, fromCoords: ICoordinates, canBeThreatened: boolean): ICoordinates[] {
         let moves: ICoordinates[] = [];
-
-        for(let dRank = -1; dRank <= 1; dRank++)
-        for(let dFile = -1; dFile <= 1; dFile++) {
-            if(dRank === 0 && dFile === 0) continue;
-
-            const toCoords = Board.addCoordinates(fromCoords, {file: dFile, rank: dRank});
-            if(Board.contains(toCoords))
-                moves.push(toCoords);
+        for(let dRank = -1; dRank <= 1; dRank++) {
+            for(let dFile = -1; dFile <= 1; dFile++) {
+                if(dRank === 0 && dFile === 0) 
+                    continue;
+                const toCoords = Board.addCoordinates(fromCoords, {file: dFile, rank: dRank});
+                if(Board.contains(toCoords))
+                    moves.push(toCoords);
+            }
         }
         return moves;
     }
@@ -26,7 +30,6 @@ export class King extends Piece {
         if(this._hasMoved) 
             return []; 
         let moves: ICoordinates[] = [];
-
         for(const coords of [
             {rank: fromCoords.rank, file: 0}, 
             {rank: fromCoords.rank, file: Board.BOARD_DIMEN-1}
@@ -34,13 +37,11 @@ export class King extends Piece {
             const maybeRook = board.getTile(coords).piece;
             if(maybeRook == null || !(maybeRook instanceof Rook) || maybeRook.hasMoved)
                 continue;
-            
             const direction = Math.sign(coords.file - fromCoords.file);
             const betweenCoords = Board.addCoordinates(fromCoords, {rank: 0, file: direction});
             const destinationCoords = Board.addCoordinates(
                 fromCoords, {rank: 0, file: 2 * direction}
             );
-
             if(board.accessibleByKing(betweenCoords, this._color) && 
                 board.accessibleByKing(destinationCoords, this._color) &&
                 board.getTile(betweenCoords).piece == null)

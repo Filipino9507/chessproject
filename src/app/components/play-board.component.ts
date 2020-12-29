@@ -12,43 +12,74 @@ import { IGameResults, GameResultReason } from '@app/shared/game-results';
 @Component({
     selector: 'app-play-board',
     template: `
-        <div class="center-content">
-
-            <div class="board-container">
-                <div class="board-rank" *ngFor="let _ of board.tileArray; let rank = index; let evenRank = even">
-                    <!-- TO BE REFACTORED FROM WITHIN .TS FILE -->
-                    <!-- <span>{{ gameSettings.playerColor === 0 ? 8 - i : i + 1 }}</span> -->
-                    <button 
-                    *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
-                    [ngClass]="[
-                        'tile', 
-                        evenRank === evenFile ? 'white-tile' : 'black-tile',
-                        board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
-                    ]"
-                    (click)="clickTile({rank: rank, file: file})">
-                    {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
-                    </button>
-                </div>
-            </div>
-
-            <div class="timer-container">
-                <h4 *ngFor="let secs of secondsLeft.reverse()">
-                    Time left: {{ Math.floor(secs / 60) }}:{{ secs % 60 | number: '2.0-0' }}
-                </h4>
-            </div>
-
+        <div id="main-container">
+            <nb-card>
+                <nb-card-body id="board-container">
+                    <div class="board-rank" *ngFor="let _ of board.tileArray; let rank = index; let evenRank = even">
+                        <button 
+                        *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
+                        [ngClass]="[
+                            'tile', 
+                            evenRank === evenFile ? 'white-tile' : 'black-tile',
+                            board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
+                        ]"
+                        (click)="clickTile({rank: rank, file: file})">
+                        {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
+                        </button>
+                    </div>
+                </nb-card-body>
+            </nb-card>
+            <nb-card>
+                <nb-card-body id="side-container">
+                    <h3 class="timer"> Time left: {{ Math.floor(secondsLeft[1] / 60) }}:{{ secondsLeft[1] % 60 | number: '2.0-0' }} </h3>
+                    <nb-card status="primary">
+                        <nb-card-header>Game controls</nb-card-header>
+                        <nb-card-body id="ui-container">
+                            <button class="game-control" nbButton size="medium" status="primary">Resign</button>
+                            <button class="game-control" nbButton size="medium" status="primary">Offer draw</button>
+                            <button class="game-control" nbButton size="medium" status="primary">Propose takeback</button>
+                        </nb-card-body>
+                    </nb-card>
+                    <h3 class="timer"> Time left: {{ Math.floor(secondsLeft[0] / 60) }}:{{ secondsLeft[0] % 60 | number: '2.0-0' }} </h3>
+                </nb-card-body>
+            </nb-card> 
         </div>
     `,
     styles: [
-        `div.board-container {
+        `#main-container {
+            display: flex;
+            flex-direction: row;
+        }`,
+
+        `#side-container {
+            margin: 0 auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        #ui-container {
+            display: flex;
+            flex-direction: column;
+        }
+        #board-container {
             margin: 0 auto;
             display: inline-block;
         }
-        div.board-rank {
-            height: 75px;
+        .timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+        button.game-control {
+            margin: 5px;
         }`,
 
-        `button.tile {
+        `div.board-rank {
+            height: 75px;
+            display: flex;
+        }
+        button.tile {
             width: 75px;
             height: 75px;
             border: 1px solid black;
@@ -63,12 +94,6 @@ import { IGameResults, GameResultReason } from '@app/shared/game-results';
         }
         button.highlighted-tile {
             background-color: rgba(255, 0, 0, 0.76);
-        }`,
-        
-        `div.timer-container {
-            margin: 0 auto;
-            padding: 30px;
-            display: inline-block;
         }`
     ]
 })

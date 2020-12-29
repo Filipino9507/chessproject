@@ -6,8 +6,9 @@ import { PieceColor } from '@app/shared/piece/piece-color';
     selector: 'app-play-options',
     template: `
         <nb-card size="small">
-            <nb-card-body class="center-content">
-                <div class="grid-container">
+            <nb-card-header>Game settings</nb-card-header>
+            <nb-card-body id="main-container">
+                <div id="grid-container">
 
                     <p>Difficulty: </p>
                     <nb-select placeholder="Select difficulty" [(selected)]="gameSettings.difficulty">
@@ -38,18 +39,27 @@ import { PieceColor } from '@app/shared/piece/piece-color';
                     </nb-select>
                 </div>
                 
-                <button nbButton size="giant" status="primary" (click)="submitGameSettings()">Play</button>
+                <button id="play-button" nbButton size="giant" status="primary" (click)="submitGameSettings()">Play</button>
             </nb-card-body>
         </nb-card>
     `,
     styles: [
-        `.grid-container {
+        `#main-container {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        #grid-container {
             display: grid;
             grid-template-columns: 150px auto;
-            padding: 15px;
             text-align: left;
             justify-content: center;
             align-items: center;
+            flex: 1;
+        }
+        #play-button {
+            flex: 1;
+            margin-top: 3px;
         }`
     ]
 })

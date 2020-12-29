@@ -2,15 +2,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { 
-  NbThemeModule, 
-  NbLayoutModule,
-  NbCardModule,
-  NbIconModule, 
-  NbSidebarModule, 
-  NbMenuModule, 
-  NbButtonModule,
-  NbSelectModule,
-  NbDialogModule
+    NbThemeModule, 
+    NbLayoutModule,
+    NbCardModule,
+    NbIconModule, 
+    NbSidebarModule, 
+    NbMenuModule, 
+    NbButtonModule,
+    NbSelectModule,
+    NbDialogModule
 } from '@nebular/theme';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -31,36 +31,36 @@ import { PromotionDialogComponent } from './components/promotion-dialog.componen
 import { PlayEndGameComponent } from './components/play-end-game.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    OptionsComponent,
-    PlayComponent,
-    HomeComponent,
-    PageNotFoundComponent,
-    AboutComponent,
-    PlayOptionsComponent,
-    PlayBoardComponent,
-    PromotionDialogComponent,
-    PlayEndGameComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    NbIconModule,
-    NbSidebarModule.forRoot(),
-    NbMenuModule.forRoot(),
-    NbThemeModule.forRoot({ name: 'dark' }),
-    NbDialogModule.forRoot(),
-    NbLayoutModule,
-    NbCardModule,
-    NbButtonModule,
-    NbSelectModule,
-    NbEvaIconsModule,
-    PagesModule,
-    ComponentsModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        OptionsComponent,
+        PlayComponent,
+        HomeComponent,
+        PageNotFoundComponent,
+        AboutComponent,
+        PlayOptionsComponent,
+        PlayBoardComponent,
+        PromotionDialogComponent,
+        PlayEndGameComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        NbIconModule,
+        NbSidebarModule.forRoot(),
+        NbMenuModule.forRoot(),
+        NbThemeModule.forRoot({ name: 'dark' }),
+        NbDialogModule.forRoot(),
+        NbLayoutModule,
+        NbCardModule,
+        NbButtonModule,
+        NbSelectModule,
+        NbEvaIconsModule,
+        PagesModule,
+        ComponentsModule
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
