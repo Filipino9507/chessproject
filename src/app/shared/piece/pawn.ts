@@ -16,9 +16,9 @@ export class Pawn extends Piece {
     private _generateNormalMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         const toCoords = Board.addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
-
-        if(Board.contains(toCoords) && board.getTile(toCoords).piece == null)
+        if(Board.contains(toCoords) && board.getTile(toCoords).piece == null) {
             moves.push(toCoords);
+        }
         return moves;
     }
 

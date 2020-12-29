@@ -17,14 +17,14 @@ import { IGameResults, GameResultReason } from '@app/shared/game-results';
                 <nb-card-body id="board-container">
                     <div class="board-rank" *ngFor="let _ of board.tileArray; let rank = index; let evenRank = even">
                         <button 
-                        *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
-                        [ngClass]="[
-                            'tile', 
-                            evenRank === evenFile ? 'white-tile' : 'black-tile',
-                            board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
-                        ]"
-                        (click)="clickTile({rank: rank, file: file})">
-                        {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
+                            *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
+                            [ngClass]="[
+                                'tile', 
+                                evenRank === evenFile ? 'white-tile' : 'black-tile',
+                                board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
+                            ]"
+                            (click)="clickTile({rank: rank, file: file})">
+                            {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
                         </button>
                     </div>
                 </nb-card-body>
@@ -35,9 +35,30 @@ import { IGameResults, GameResultReason } from '@app/shared/game-results';
                     <nb-card status="primary">
                         <nb-card-header>Game controls</nb-card-header>
                         <nb-card-body id="ui-container">
-                            <button class="game-control" nbButton size="medium" status="primary">Resign</button>
-                            <button class="game-control" nbButton size="medium" status="primary">Offer draw</button>
-                            <button class="game-control" nbButton size="medium" status="primary">Propose takeback</button>
+                            <button 
+                                class="game-control" 
+                                nbButton
+                                size="medium" 
+                                status="primary"
+                                (click)="resignGame()">
+                                Resign
+                            </button>
+                            <button 
+                                class="game-control" 
+                                nbButton 
+                                size="medium" 
+                                status="primary"
+                                (click)="drawGame()">
+                                Offer draw
+                            </button>
+                            <button 
+                                class="game-control" 
+                                nbButton 
+                                size="medium" 
+                                status="primary"
+                                (click)="takeMoveBack()">
+                                Propose takeback
+                            </button>
                         </nb-card-body>
                     </nb-card>
                     <h3 class="timer"> Time left: {{ Math.floor(secondsLeft[0] / 60) }}:{{ secondsLeft[0] % 60 | number: '2.0-0' }} </h3>
@@ -228,5 +249,35 @@ export class PlayBoardComponent implements OnInit {
                 gameSettings: this.gameSettings,
             });
         }
+    }
+
+    /** Triggers and resolves resignation dialog */
+    public resignGame(): void {
+        if(confirm('Do you really want to resign?')) {
+            this._passActivePlayerColors();
+            this.endGameEventEmitter.emit({
+                winner: this._activePlayerColor,
+                reason: GameResultReason.RESIGNATION,
+                boardState: this.board,
+                gameSettings: this.gameSettings
+            });
+        }
+    }
+
+    /** Triggers and resolves draw dialog */
+    public drawGame(): void {
+        if(confirm('Does the other player agree to draw?')) {
+            this.endGameEventEmitter.emit({
+                winner: null,
+                reason: GameResultReason.AGREEMENT,
+                boardState: this.board,
+                gameSettings: this.gameSettings
+            });
+        }
+    }
+
+    /** Triggers and resolves takeback dialog */
+    public takeMoveBack(): void {
+        
     }
 }

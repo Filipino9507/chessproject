@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IGameResults, GameResultReason } from '@app/shared/game-results';
 import { PieceColor } from '@app/shared/piece/piece-color';
 
@@ -12,14 +12,22 @@ import { PieceColor } from '@app/shared/piece/piece-color';
             <div [ngSwitch]="gameResults.reason">
                 <p *ngSwitchCase="GameResultReason.CHECKMATE">Checkmate</p>
                 <p *ngSwitchCase="GameResultReason.TIME_OUT">Won on time</p>
+                <p *ngSwitchCase="GameResultReason.RESIGNATION">Resignation</p>
                 <p *ngSwitchCase="GameResultReason.STALEMATE">Stalemate</p>
                 <p *ngSwitchCase="GameResultReason.REPETITION">Draw by repetition</p>
                 <p *ngSwitchCase="GameResultReason.FIFTY_MOVE_RULE">Draw by fifty-move rule</p>
+                <p *ngSwitchCase="GameResultReason.AGREEMENT">Draw on agreement</p>
             </div>
             <p *ngIf="gameResults.winner != null">
                 Winner: {{ gameResults.winner === PieceColor.WHITE ? 'White': 'Black' }}
             </p>
-            <button nbButton size="giant" status="primary">Continue</button>
+            <button 
+                nbButton 
+                size="giant" 
+                status="primary"
+                (click)="resetGame()">
+                Continue
+            </button>
         </nb-card-body>
         </nb-card>
     `,
@@ -36,10 +44,18 @@ export class PlayEndGameComponent implements OnInit {
     /** Game result input (received from play-board-component)  */
     @Input() public gameResults: IGameResults;
 
+    /** Event that resets the game back to options screen */
+    @Output() public resetGameEventEmitter = new EventEmitter();
+
     /** Constructor */
     public constructor() {}
 
     /** On init */
     public ngOnInit(): void {}
+
+    /** Sends signal to reset the game back to options screen */
+    public resetGame(): void {
+        this.resetGameEventEmitter.emit();
+    }
 
 }

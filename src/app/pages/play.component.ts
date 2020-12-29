@@ -6,22 +6,23 @@ import { GameState } from '@app/shared/game-state';
 @Component({
     selector: 'app-play-menu',
     template: `
-        <div *ngIf="gameOn === GameState.PRE_GAME">
+        <div *ngIf="gameState === GameState.PRE_GAME">
             <app-play-options 
                 (startGameEventEmitter)="startGame($event)">
             </app-play-options>
         </div>
 
-        <div *ngIf="gameOn === GameState.IN_GAME">
+        <div *ngIf="gameState === GameState.IN_GAME">
             <app-play-board 
                 [gameSettings]="gameSettings"
                 (endGameEventEmitter)="endGame($event)">
             </app-play-board>
         </div>
 
-        <div *ngIf="gameOn === GameState.POST_GAME">
+        <div *ngIf="gameState === GameState.POST_GAME">
             <app-play-end-game
-                [gameResults]="gameResults">
+                [gameResults]="gameResults"
+                (resetGameEventEmitter)="resetGame()">
             </app-play-end-game>
         </div>
     `,
@@ -40,23 +41,27 @@ export class PlayComponent implements OnInit {
     
     public GameState = GameState;
 
-    public gameOn: GameState;
+    public gameState: GameState;
     public gameSettings: IGameSettings;
     public gameResults: IGameResults;
 
     public constructor() { }
 
     public ngOnInit(): void {
-        this.gameOn = GameState.PRE_GAME;
+        this.gameState = GameState.PRE_GAME;
     }
 
     public startGame(gameSettings: IGameSettings): void {
         this.gameSettings = gameSettings;
-        this.gameOn = GameState.IN_GAME;
+        this.gameState = GameState.IN_GAME;
     }
 
     public endGame(gameResults: IGameResults): void {
         this.gameResults = gameResults;
-        this.gameOn = GameState.POST_GAME;
+        this.gameState = GameState.POST_GAME;
+    }
+
+    public resetGame(): void {
+        this.gameState = GameState.PRE_GAME;
     }
 }

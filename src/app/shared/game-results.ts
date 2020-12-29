@@ -11,8 +11,10 @@ export interface IGameResults {
 
 export enum GameResultReason {
     CHECKMATE,
+    TIME_OUT,
+    RESIGNATION,
     STALEMATE,
     REPETITION,
     FIFTY_MOVE_RULE,
-    TIME_OUT
+    AGREEMENT
 }
