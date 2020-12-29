@@ -3,7 +3,8 @@ import { IGameSettings } from '@app/shared/game-settings';
 import { Board } from '@app/shared/board';
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
-import { IGameResults, GameResultReason } from '@app/shared/game-results';
+import { IGameResults } from '@app/shared/game-results';
+import { EGameResultReason } from '@app/shared/game-result-reason'; 
 
 /**
  * Board component
@@ -172,7 +173,7 @@ export class PlayBoardComponent implements OnInit {
                 this._passActivePlayerColors();
                 this.endGameEventEmitter.emit({
                     winner: this._activePlayerColor,
-                    reason: GameResultReason.TIME_OUT,
+                    reason: EGameResultReason.TIME_OUT,
                     boardState: this.board,
                     gameSettings: this.gameSettings
                 });
@@ -241,7 +242,7 @@ export class PlayBoardComponent implements OnInit {
             const isStalemate = Board.isKingSafeOnBoard(this.board, this._activePlayerColor);
             this._passActivePlayerColors();
             const winner = isStalemate ? null : this._activePlayerColor;
-            const reason = isStalemate ? GameResultReason.STALEMATE : GameResultReason.CHECKMATE;
+            const reason = isStalemate ? EGameResultReason.STALEMATE : EGameResultReason.CHECKMATE;
             this.endGameEventEmitter.emit({
                 winner,
                 reason,
@@ -257,7 +258,7 @@ export class PlayBoardComponent implements OnInit {
             this._passActivePlayerColors();
             this.endGameEventEmitter.emit({
                 winner: this._activePlayerColor,
-                reason: GameResultReason.RESIGNATION,
+                reason: EGameResultReason.RESIGNATION,
                 boardState: this.board,
                 gameSettings: this.gameSettings
             });
@@ -269,7 +270,7 @@ export class PlayBoardComponent implements OnInit {
         if(confirm('Does the other player agree to draw?')) {
             this.endGameEventEmitter.emit({
                 winner: null,
-                reason: GameResultReason.AGREEMENT,
+                reason: EGameResultReason.AGREEMENT,
                 boardState: this.board,
                 gameSettings: this.gameSettings
             });

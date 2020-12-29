@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { IGameResults, GameResultReason } from '@app/shared/game-results';
+import { IGameResults } from '@app/shared/game-results';
+import { EGameResultReason } from '@app/shared/game-result-reason';
 import { PieceColor } from '@app/shared/piece/piece-color';
 
 /** Screen that shows up after the game has finished */
@@ -36,7 +37,7 @@ import { PieceColor } from '@app/shared/piece/piece-color';
 export class PlayEndGameComponent implements OnInit {
 
     /** Reason for the game result (typed as interface GameResultReason) */
-    public GameResultReason = GameResultReason;
+    public GameResultReason = EGameResultReason;
 
     /** Allows usage of PieceColor interface in template */
     public PieceColor = PieceColor;

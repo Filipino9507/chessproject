@@ -1,20 +1,11 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { Board } from '@app/shared/board';
 import { IGameSettings } from '@app/shared/game-settings';
+import { EGameResultReason } from '@app/shared/game-result-reason';
 
 export interface IGameResults {
     winner: PieceColor;
-    reason: GameResultReason;
+    reason: EGameResultReason;
     boardState: Board;
     gameSettings: IGameSettings;
-}
-
-export enum GameResultReason {
-    CHECKMATE,
-    TIME_OUT,
-    RESIGNATION,
-    STALEMATE,
-    REPETITION,
-    FIFTY_MOVE_RULE,
-    AGREEMENT
 }
