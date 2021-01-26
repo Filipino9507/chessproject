@@ -1,4 +1,5 @@
-import { Board } from '@app/shared/board';
+import { IBoard } from '@app/shared/board-interface';
+import { BOARD_DIMEN, addCoordinates, scaleCoordinates, areCoordinatesValid } from '@app/shared/board-utility';
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from './piece-color';
 
@@ -18,9 +19,9 @@ export abstract class Piece {
 
     public abstract copy(): Piece;
 
-    protected abstract _generateMoves(board: Board, fromCoords: ICoordinates): ICoordinates[];
+    protected abstract _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[];
 
-    public generatePossibleMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
+    public generatePossibleMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateMoves(board, fromCoords).filter((toCoords) => {
             const piece = board.getTile(toCoords).piece;
             return (piece == null || piece.color !== this._color)
@@ -28,25 +29,25 @@ export abstract class Piece {
         });
     }
 
-    public generateThreatMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
+    public generateThreatMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateMoves(board, fromCoords);
     }       
 
-    public updateBoardThreats(board: Board, fromCoords: ICoordinates): void {
+    public updateBoardThreats(board: IBoard, fromCoords: ICoordinates): void {
         for(let coords of this.generateThreatMoves(board, fromCoords))
             board.getTile(coords).threatenedBy.add(this);
     }
 
     protected generateDistanceMoves(
-        board: Board, 
+        board: IBoard, 
         fromCoords: ICoordinates, 
         directions: ICoordinates[]
     ): ICoordinates[] {
         let moves: ICoordinates[] = [];
         for(let direction of directions)
-        for(let d = 1; d < Board.BOARD_DIMEN; d++) {
-            const toCoords = Board.addCoordinates(fromCoords, Board.scaleCoordinates(direction, d));
-            if(Board.contains(toCoords)) {
+        for(let d = 1; d < BOARD_DIMEN; d++) {
+            const toCoords = addCoordinates(fromCoords, scaleCoordinates(direction, d));
+            if(areCoordinatesValid(toCoords)) {
                 const piece = board.getTile(toCoords).piece;
                 if(piece == null) {
                     moves.push(toCoords);
@@ -60,7 +61,7 @@ export abstract class Piece {
         return moves;
     }
 
-    public move(board: Board, toCoords: ICoordinates): void {
+    public move(board: IBoard, toCoords: ICoordinates): void {
         const fromTile = this._tile;
         const toTile = board.getTile(toCoords);
         toTile.piece = fromTile.piece;

@@ -1,6 +1,7 @@
-import { Board } from '@app/shared/board';
+import { IBoard } from '@app/shared/board-interface';
+import { addCoordinates, areCoordinatesValid } from '@app/shared/board-utility';
 import { ICoordinates } from '@app/shared/tile';
-import { Piece } from './piece';
+import { Piece } from '@app/shared/piece/piece';
 
 export class Knight extends Piece {
 
@@ -11,20 +12,20 @@ export class Knight extends Piece {
         return new Knight(this._color);
     }
 
-    protected _generateMoves(_: Board, fromCoords: ICoordinates): ICoordinates[] {
+    protected _generateMoves(_: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
 
         for(let toCoords of [
-            Board.addCoordinates(fromCoords, {file: -1, rank: 2}),
-            Board.addCoordinates(fromCoords, {file: 1, rank: 2}),
-            Board.addCoordinates(fromCoords, {file: -1, rank: -2}),
-            Board.addCoordinates(fromCoords, {file: 1, rank: -2}),
-            Board.addCoordinates(fromCoords, {file: 2, rank: -1}),
-            Board.addCoordinates(fromCoords, {file: 2, rank: 1}),
-            Board.addCoordinates(fromCoords, {file: -2, rank: -1}),
-            Board.addCoordinates(fromCoords, {file: -2, rank: 1}),
+            addCoordinates(fromCoords, {file: -1, rank: 2}),
+            addCoordinates(fromCoords, {file: 1, rank: 2}),
+            addCoordinates(fromCoords, {file: -1, rank: -2}),
+            addCoordinates(fromCoords, {file: 1, rank: -2}),
+            addCoordinates(fromCoords, {file: 2, rank: -1}),
+            addCoordinates(fromCoords, {file: 2, rank: 1}),
+            addCoordinates(fromCoords, {file: -2, rank: -1}),
+            addCoordinates(fromCoords, {file: -2, rank: 1}),
         ]) {
-            if(Board.contains(toCoords)) moves.push(toCoords);
+            if(areCoordinatesValid(toCoords)) moves.push(toCoords);
         }
         return moves;
     }

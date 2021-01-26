@@ -1,6 +1,6 @@
-import { Board } from '@app/shared/board';
+import { IBoard } from '@app/shared/board-interface';
 import { ICoordinates } from '@app/shared/tile';
-import { Piece } from './piece';
+import { Piece } from '@app/shared/piece/piece';
 
 export class Queen extends Piece {
 
@@ -11,7 +11,7 @@ export class Queen extends Piece {
         return new Queen(this._color);
     }
 
-    protected _generateMoves(board: Board, fromCoords: ICoordinates): ICoordinates[] {
+    protected _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this.generateDistanceMoves(board, fromCoords, [
             {file: 1, rank: 1}, 
             {file: 1, rank: -1},

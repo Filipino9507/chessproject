@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
 import { Board } from '@app/shared/board';
+import { areCoordinatesInArray, isKingSafeOnBoard } from '@app/shared/board-utility';
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
@@ -205,7 +206,7 @@ export class PlayBoardComponent implements OnInit {
         const hasSameColorPiece = toTile.piece != null && 
             toTile.piece.color === this._activePlayerColor;
 
-        if(Board.areCoordinatesInArray(coords, this._selectedTilePossibilities) && !hasSameColorPiece) {
+        if(areCoordinatesInArray(coords, this._selectedTilePossibilities) && !hasSameColorPiece) {
             this._selectedTile.piece.move(this.board, coords);
             this._handlePassTurn();
         }
@@ -239,7 +240,7 @@ export class PlayBoardComponent implements OnInit {
     private handleGameEnd(): void {
         const allPossibleMoves = this.board.generateAllPossibleMoves(this._activePlayerColor);
         if(allPossibleMoves.length === 0) {
-            const isStalemate = Board.isKingSafeOnBoard(this.board, this._activePlayerColor);
+            const isStalemate = isKingSafeOnBoard(this.board, this._activePlayerColor);
             this._passActivePlayerColors();
             const winner = isStalemate ? null : this._activePlayerColor;
             const reason = isStalemate ? EGameResultReason.STALEMATE : EGameResultReason.CHECKMATE;

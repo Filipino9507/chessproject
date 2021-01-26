@@ -1,5 +1,7 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { ITile, ICoordinates } from '@app/shared/tile';
+import { generateBoardAfterMove, isKingSafeOnBoard } from '@app/shared/board-utility';
+import { IBoard } from '@app/shared/board-interface';
 import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
 import { Knight } from '@app/shared/piece/knight';
@@ -12,7 +14,7 @@ import { King } from '@app/shared/piece/king';
  * Class holding the board array, its associated methods and utility methods for
  * working with tiles and coordinates
  */
-export class Board {
+export class Board implements IBoard {
 
     /** The dimensions of the board */
     public static readonly BOARD_DIMEN = 8;
@@ -42,7 +44,7 @@ export class Board {
             this._tileArray[rank] = new Array(Board.BOARD_DIMEN);
             const color = rank > 3 ? PieceColor.WHITE : PieceColor.BLACK;
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
-                let piece;
+                let piece: Piece;
                 switch(rank) {
                     case 0: case 7:
                         switch(file) {
@@ -134,8 +136,8 @@ export class Board {
     /** Checks if king is safe after the said move */
     public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
         const color = this.getTile(fromCoords).piece.color;
-        const testBoard = Board.generateBoardAfterMove(this, fromCoords, toCoords);
-        return Board.isKingSafeOnBoard(testBoard, color);
+        const testBoard = generateBoardAfterMove(this, fromCoords, toCoords);
+        return isKingSafeOnBoard(testBoard, color);
     }
 
     /** Returns a deep copy of the board */
@@ -182,63 +184,5 @@ export class Board {
     public set moveCount(value: number) {
         this._moveCount = value;
     } 
-
-    // #region STATIC
-
-    /** Checks if king of a given color is safe on a given board */
-    public static isKingSafeOnBoard(board: Board, kingColor: PieceColor): boolean {
-        let safeKing = true;
-        for (let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
-            for(let file = 0; file < Board.BOARD_DIMEN; file++) {
-                const coords: ICoordinates = {rank, file};
-                const maybeKing = board.getTile(coords).piece;
-                if(maybeKing != null && maybeKing instanceof King &&
-                    maybeKing.color === kingColor &&
-                    !board.accessibleByKing(coords, kingColor)) {
-                        safeKing = false;
-                    }      
-            }
-        }
-        return safeKing;
-    }
-
-    /** Generates a copy of a board after the given move */
-    public static generateBoardAfterMove(board: Board, fromCoords: ICoordinates, toCoords: ICoordinates): Board {
-        const alternativeBoard = board.copy();
-        const movingPiece = alternativeBoard.getTile(fromCoords).piece;
-        movingPiece.move(alternativeBoard, toCoords);
-        alternativeBoard.updateThreatMoves();
-        return alternativeBoard;
-    }
-
-    /** Check whether the given coordinates exist within the board */
-    public static contains(coords: ICoordinates): boolean {
-        return coords.rank >= 0 && coords.rank < Board.BOARD_DIMEN && 
-        coords.file >= 0 && coords.file < Board.BOARD_DIMEN;
-    }
-
-    /** Returns whether two coordinates are equal */
-    public static areCoordinatesEqual(coords1: ICoordinates, coords2: ICoordinates): boolean {
-        return coords1.rank === coords2.rank && coords1.file === coords2.file;
-    }
-
-    /** Returns two coordinates added together */
-    public static addCoordinates(coords1: ICoordinates, coords2: ICoordinates): ICoordinates {
-        return {file: coords1.file + coords2.file, rank: coords1.rank + coords2.rank};
-    }
-
-    /** Returns coordinates object multiplied by a scalar value */
-    public static scaleCoordinates(coords: ICoordinates, scale: number): ICoordinates {
-        return {file: scale * coords.file, rank: scale * coords.rank};
-    }
-
-    /** Checks whether an array contains given coordinates */
-    public static areCoordinatesInArray(coords: ICoordinates, array: ICoordinates[]): boolean {
-        for(let elt of array)
-            if(Board.areCoordinatesEqual(elt, coords)) 
-                return true;
-        return false;
-    }
-    // #endregion
  }
  
