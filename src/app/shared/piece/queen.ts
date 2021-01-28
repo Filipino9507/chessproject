@@ -6,6 +6,7 @@ export class Queen extends Piece {
 
     protected readonly _symbols = ['♕', '♛'];
     protected readonly _value = 9;
+    protected readonly _checkable = false
 
     public copy(): Queen {
         return new Queen(this._color);

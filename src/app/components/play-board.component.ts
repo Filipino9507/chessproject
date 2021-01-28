@@ -7,6 +7,9 @@ import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
 import { EGameResultReason } from '@app/shared/game-result-reason'; 
 
+
+enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
+
 /**
  * Board component
  * Holds the board object, remaining time data, and data necessary for UI to function.
@@ -36,13 +39,13 @@ import { EGameResultReason } from '@app/shared/game-result-reason';
                     <h3 class="timer"> Time left: {{ Math.floor(secondsLeft[1] / 60) }}:{{ secondsLeft[1] % 60 | number: '2.0-0' }} </h3>
                     <nb-card status="primary">
                         <nb-card-header>Game controls</nb-card-header>
-                        <nb-card-body id="ui-container">
+                        <nb-card-body class="ui-container" *ngIf="confirmationDialogMode === EConfirmationDialogMode.NONE">
                             <button 
                                 class="game-control" 
                                 nbButton
                                 size="medium" 
                                 status="primary"
-                                (click)="resignGame()">
+                                (click)="confirmationDialogMode = EConfirmationDialogMode.RESIGN">
                                 Resign
                             </button>
                             <button 
@@ -50,7 +53,7 @@ import { EGameResultReason } from '@app/shared/game-result-reason';
                                 nbButton 
                                 size="medium" 
                                 status="primary"
-                                (click)="drawGame()">
+                                (click)="confirmationDialogMode = EConfirmationDialogMode.DRAW">
                                 Offer draw
                             </button>
                             <button 
@@ -58,8 +61,27 @@ import { EGameResultReason } from '@app/shared/game-result-reason';
                                 nbButton 
                                 size="medium" 
                                 status="primary"
-                                (click)="takeMoveBack()">
+                                (click)="confirmationDialogMode = EConfirmationDialogMode.TAKEBACK">
                                 Propose takeback
+                            </button>
+                        </nb-card-body>
+                        <nb-card-body class="ui-container" *ngIf="confirmationDialogMode !== EConfirmationDialogMode.NONE">
+                            <p>{{ getConfirmationDialogString() }}</p>
+                            <button 
+                                class="game-control" 
+                                nbButton
+                                size="medium" 
+                                status="primary"
+                                (click)="confirmDialog()">
+                                Yes
+                            </button>
+                            <button 
+                                class="game-control" 
+                                nbButton
+                                size="medium" 
+                                status="primary"
+                                (click)="cancelDialog()">
+                                No
                             </button>
                         </nb-card-body>
                     </nb-card>
@@ -80,7 +102,7 @@ import { EGameResultReason } from '@app/shared/game-result-reason';
             display: flex;
             flex-direction: column;
         }
-        #ui-container {
+        .ui-container {
             display: flex;
             flex-direction: column;
         }
@@ -121,9 +143,9 @@ import { EGameResultReason } from '@app/shared/game-result-reason';
     ]
 })
 export class PlayBoardComponent implements OnInit {
-
-    /** Allows usage of Math in component */
+    /** Allows usage inside component */
     public Math = Math;
+    public EConfirmationDialogMode = EConfirmationDialogMode;
 
     /** Board object */
     public board: Board;
@@ -139,6 +161,9 @@ export class PlayBoardComponent implements OnInit {
 
     /** Possibilities of movement from the currently selected tile */
     private _selectedTilePossibilities: ICoordinates[];
+
+    /** The type of dialog which is currently going on */
+    public confirmationDialogMode: EConfirmationDialogMode;
 
     /** Game settings input (received from play-options) */
     @Input() public gameSettings: IGameSettings;
@@ -161,6 +186,7 @@ export class PlayBoardComponent implements OnInit {
         this._activePlayerColor = PieceColor.WHITE;
         this._selectedTile = null;
         this._selectedTilePossibilities = null;
+        this.confirmationDialogMode = EConfirmationDialogMode.NONE;
     }
 
     /** Initializes game timer, sets interval for seconds decrease and end condition */
@@ -226,9 +252,8 @@ export class PlayBoardComponent implements OnInit {
         this.board.updateThreatMoves();
         this.secondsLeft[this._activePlayerColor] += this.gameSettings.secondsIncrement;
         this._passActivePlayerColors();
-        this.handleGameEnd();
+        this._handleGameEnd();
     }
-
 
     /** Changes active player color to the opposite */
     private _passActivePlayerColors(): void {
@@ -236,8 +261,44 @@ export class PlayBoardComponent implements OnInit {
             PieceColor.BLACK : PieceColor.WHITE;
     }
 
+    /** Confirms dialog */
+    public confirmDialog(): void {
+        switch(this.confirmationDialogMode) {
+            case EConfirmationDialogMode.RESIGN:
+                this.resignGame();
+                break;
+            case EConfirmationDialogMode.DRAW:
+                this.drawGame();
+                break;
+            case EConfirmationDialogMode.TAKEBACK:
+                this.takeMoveBack();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** Gets confirmation dialog string */
+    public getConfirmationDialogString(): string {
+        switch(this.confirmationDialogMode) {
+            case EConfirmationDialogMode.RESIGN:
+                return 'Do you really want to resign?';
+            case EConfirmationDialogMode.DRAW:
+                return 'Does the other player want to draw?';
+            case EConfirmationDialogMode.TAKEBACK:
+                return 'Does the other player accept the takeback?';
+            default:
+                return '';
+        }
+    }
+
+    /** Cancels dialog */
+    public cancelDialog(): void {
+        this.confirmationDialogMode = EConfirmationDialogMode.NONE;
+    }
+
     /** Handles game end and sends the information about it via endGameEmitter */
-    private handleGameEnd(): void {
+    private _handleGameEnd(): void {
         const allPossibleMoves = this.board.generateAllPossibleMoves(this._activePlayerColor);
         if(allPossibleMoves.length === 0) {
             const isStalemate = isKingSafeOnBoard(this.board, this._activePlayerColor);
@@ -253,32 +314,28 @@ export class PlayBoardComponent implements OnInit {
         }
     }
 
-    /** Triggers and resolves resignation dialog */
+    /** Triggers resignation */
     public resignGame(): void {
-        if(confirm('Do you really want to resign?')) {
-            this._passActivePlayerColors();
-            this.endGameEventEmitter.emit({
-                winner: this._activePlayerColor,
-                reason: EGameResultReason.RESIGNATION,
-                boardState: this.board,
-                gameSettings: this.gameSettings
-            });
-        }
+        this._passActivePlayerColors();
+        this.endGameEventEmitter.emit({
+            winner: this._activePlayerColor,
+            reason: EGameResultReason.RESIGNATION,
+            boardState: this.board,
+            gameSettings: this.gameSettings
+        });
     }
 
-    /** Triggers and resolves draw dialog */
+    /** Triggers draw */
     public drawGame(): void {
-        if(confirm('Does the other player agree to draw?')) {
-            this.endGameEventEmitter.emit({
-                winner: null,
-                reason: EGameResultReason.AGREEMENT,
-                boardState: this.board,
-                gameSettings: this.gameSettings
-            });
-        }
+        this.endGameEventEmitter.emit({
+            winner: null,
+            reason: EGameResultReason.AGREEMENT,
+            boardState: this.board,
+            gameSettings: this.gameSettings
+        });
     }
 
-    /** Triggers and resolves takeback dialog */
+    /** Triggers takeback */
     public takeMoveBack(): void {
         
     }

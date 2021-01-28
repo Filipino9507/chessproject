@@ -45,14 +45,15 @@ export class Board implements IBoard {
             const color = rank > 3 ? PieceColor.WHITE : PieceColor.BLACK;
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 let piece: Piece;
+                const tile = this._tileArray[rank][file];
                 switch(rank) {
                     case 0: case 7:
                         switch(file) {
-                        case 3: piece = new Queen(color); break;
-                        case 4: piece = new King(color); break;
-                        case 0: case 7: piece = new Rook(color); break;
-                        case 1: case 6: piece = new Knight(color); break;
-                        default: piece = new Bishop(color); break;
+                            case 3: piece = new Queen(color); break;
+                            case 4: piece = new King(color); break;
+                            case 0: case 7: piece = new Rook(color); break;
+                            case 1: case 6: piece = new Knight(color); break;
+                            default: piece = new Bishop(color); break;
                         } 
                         break;
                     case 1: case 6: piece = new Pawn(color); break;

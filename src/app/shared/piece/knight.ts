@@ -7,6 +7,7 @@ export class Knight extends Piece {
 
     protected readonly _symbols = ['♘', '♞'];
     protected readonly _value = 3;
+    protected readonly _checkable = false
 
     public copy(): Knight {
         return new Knight(this._color);

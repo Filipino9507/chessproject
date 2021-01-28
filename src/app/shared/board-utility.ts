@@ -6,13 +6,13 @@ import { King } from '@app/shared/piece/king';
 export const BOARD_DIMEN = 8;
 
 /** Checks if king of a given color is safe on a given board */
-export function isKingSafeOnBoard(board: IBoard, kingColor: PieceColor): boolean {
+export function isKingSafeOnBoard(board: IBoard, kingColor: PieceColor): boolean{
     let safeKing = true;
     for (let rank = 0; rank < BOARD_DIMEN; rank++) {
         for(let file = 0; file < BOARD_DIMEN; file++) {
             const coords: ICoordinates = {rank, file};
             const maybeKing = board.getTile(coords).piece;
-            if(maybeKing != null && maybeKing instanceof King &&
+            if(maybeKing != null && maybeKing.checkable &&
                 maybeKing.color === kingColor &&
                 !board.accessibleByKing(coords, kingColor)) {
                     safeKing = false;

@@ -6,6 +6,7 @@ export class Bishop extends Piece {
 
     protected readonly _symbols = ['♗', '♝'];
     protected readonly _value = 3;
+    protected readonly _checkable = false
 
     public copy(): Bishop {
         return new Bishop(this._color);

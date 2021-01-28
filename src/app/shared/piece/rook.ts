@@ -6,6 +6,7 @@ export class Rook extends Piece {
 
     protected readonly _symbols = ['♖', '♜'];
     protected readonly _value = 5;
+    protected readonly _checkable = false
 
     public copy(): Rook {
         return new Rook(this._color);

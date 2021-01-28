@@ -8,12 +8,13 @@ export class King extends Piece {
 
     protected readonly _symbols = ['♔', '♚'];
     protected readonly _value = 0;
+    protected readonly _checkable = true;
 
     public copy(): King {
         return new King(this._color);
     }
 
-    private _generateKingMoves(board: IBoard, fromCoords: ICoordinates, canBeThreatened: boolean): ICoordinates[] {
+    private _generateKingMoves(fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         for(let dRank = -1; dRank <= 1; dRank++) {
             for(let dFile = -1; dFile <= 1; dFile++) {
@@ -53,12 +54,12 @@ export class King extends Piece {
     }
 
     protected _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
-        return this._generateKingMoves(board, fromCoords, false)
+        return this._generateKingMoves(fromCoords)
             .concat(this._generateCastlingMoves(board, fromCoords));
     }
 
     public generateThreatMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
-        return this._generateKingMoves(board, fromCoords, true);
+        return this._generateKingMoves(fromCoords);
     }
 
     public move(board: IBoard, toCoords: ICoordinates): void {

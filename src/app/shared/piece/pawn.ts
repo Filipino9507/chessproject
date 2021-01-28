@@ -1,13 +1,15 @@
 import { IBoard } from '@app/shared/board-interface';
 import { addCoordinates, areCoordinatesValid } from '@app/shared/board-utility';
 import { ICoordinates } from '@app/shared/tile';
-import { Piece } from './piece';
-import { PieceColor } from './piece-color'; 
+import { Piece } from '@app/shared/piece/piece';
+import { PieceColor } from '@app/shared/piece/piece-color'; 
+import { Queen } from '@app/shared/piece/queen';
 
 export class Pawn extends Piece {
 
     protected readonly _symbols = ['♙', '♟'];
     protected readonly _value = 1;
+    protected readonly _checkable = false
     protected _firstRowMoveNumber = 0;
 
     public copy(): Pawn {
@@ -88,6 +90,12 @@ export class Pawn extends Piece {
         this._markFirstRowMove(board, toCoords);
         this._attemptEnPassant(board, toCoords);
         super.move(board, toCoords);
+        this._attemptPromotion(toCoords);
+    }
+
+    private _markFirstRowMove(board: IBoard, toCoords: ICoordinates): void {
+        if(Math.abs(this._tile.coords.rank - toCoords.rank) === 2)
+            this.firstRowMoveNumber = board.moveCount;
     }
 
     private _attemptEnPassant(board: IBoard, toCoords: ICoordinates): void {
@@ -101,9 +109,12 @@ export class Pawn extends Piece {
         }    
     }
 
-    private _markFirstRowMove(board: IBoard, toCoords: ICoordinates): void {
-        if(Math.abs(this._tile.coords.rank - toCoords.rank) === 2)
-            this.firstRowMoveNumber = board.moveCount;
+    private _attemptPromotion(coords: ICoordinates): void {
+        const lastRank = this._color === PieceColor.WHITE ? 0 : 7;
+        if(coords.rank === lastRank) {
+            this._tile.piece = new Queen(this._color);
+            this._tile.piece.tile = this._tile;
+        }
     }
 
     public get firstRowMoveNumber(): number {
