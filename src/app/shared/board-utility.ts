@@ -32,7 +32,8 @@ export function generateBoardAfterMove(board: IBoard, fromCoords: ICoordinates, 
 
 /** Check whether the given coordinates exist within the board */
 export function areCoordinatesValid(coords: ICoordinates): boolean {
-    return coords.rank >= 0 && coords.rank < BOARD_DIMEN && 
+    return !isNaN(coords.rank) && !isNaN(coords.file) &&
+    coords.rank >= 0 && coords.rank < BOARD_DIMEN && 
     coords.file >= 0 && coords.file < BOARD_DIMEN;
 }
 

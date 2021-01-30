@@ -5,7 +5,8 @@ import { areCoordinatesInArray, BOARD_DIMEN, isKingSafeOnBoard } from '@app/shar
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
-import { EGameResultReason } from '@app/shared/game-result-reason'; 
+import { EGameResultReason } from '@app/shared/game-result-reason';
+import { GameRepresentationManager } from '@app/shared/game-representation-manager';
 
 
 enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
@@ -33,7 +34,6 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                                 {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
                             </button>
                         </div> 
-                        
                     </div>
                 </nb-card-body>
             </nb-card>
@@ -67,6 +67,12 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                                 (click)="confirmationDialogMode = EConfirmationDialogMode.TAKEBACK">
                                 Propose takeback
                             </button>
+                            <input
+                                #self
+                                nbInput
+                                type="file"
+                                (change)="loadGame(self)" 
+                            />
                         </nb-card-body>
                         <nb-card-body class="ui-container" *ngIf="confirmationDialogMode !== EConfirmationDialogMode.NONE">
                             <p>{{ getConfirmationDialogString() }}</p>
@@ -147,7 +153,7 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
 })
 export class PlayBoardComponent implements OnInit {
     /** Allows usage inside component */
-    public Math = Math;
+    // public Math = Math;
     public EConfirmationDialogMode = EConfirmationDialogMode;
 
     /** Board object */
@@ -175,7 +181,7 @@ export class PlayBoardComponent implements OnInit {
     @Output() public endGameEventEmitter = new EventEmitter<IGameResults>();
 
     /** Constructor */
-    public constructor() { }
+    public constructor(public gameRepresentationManager: GameRepresentationManager) { }
 
     /** On init */
     public ngOnInit(): void {
@@ -278,7 +284,7 @@ export class PlayBoardComponent implements OnInit {
             : (timerIdx + 1) % 2;
         const minutes = Math.floor(this.secondsLeft[playerColor] / 60);
         const seconds = this.secondsLeft[playerColor] % 60;
-        return `${minutes}:${seconds === 0 ? '00' : seconds}`;
+        return `${minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`;
     }
 
     /** Confirms dialog */
@@ -358,5 +364,22 @@ export class PlayBoardComponent implements OnInit {
     /** Triggers takeback */
     public takeMoveBack(): void {
         
+    }
+
+    /** Loads game */
+    public loadGame(target: HTMLInputElement): void {
+        this.gameRepresentationManager.readFile(target, (result: any) => {
+            const moveList = this.gameRepresentationManager.toMoveList(result);
+            if(moveList && this.board.loadGame(moveList)) {
+                this._initializeFields();
+                this._activePlayerColor = moveList.length % 2;
+            }
+            target.value = '';
+        });
+    }
+
+    /** Saves game */
+    public saveGame(): void {
+
     }
 }

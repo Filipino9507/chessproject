@@ -1,6 +1,10 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { ITile, ICoordinates } from '@app/shared/tile';
-import { generateBoardAfterMove, isKingSafeOnBoard } from '@app/shared/board-utility';
+import { 
+    generateBoardAfterMove, 
+    isKingSafeOnBoard,
+    areCoordinatesValid
+} from '@app/shared/board-utility';
 import { IBoard } from '@app/shared/board-interface';
 import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
@@ -9,6 +13,7 @@ import { Bishop } from '@app/shared/piece/bishop';
 import { Rook } from '@app/shared/piece/rook';
 import { Queen } from '@app/shared/piece/queen';
 import { King } from '@app/shared/piece/king';
+import { parse } from 'path';
 
 /**
  * Class holding the board array, its associated methods and utility methods for
@@ -30,6 +35,26 @@ export class Board implements IBoard {
         this._initializeTileArray();
         this.updateThreatMoves();
         this._moveCount = 0;
+
+        // this.loadGame('6444')
+    }
+
+    /** Loads game from a string of moves */
+    public loadGame(moveList: {fromCoords: ICoordinates, toCoords: ICoordinates}[]): boolean {
+        console.log('BBBB');
+        this._initializeTileArray();
+        this.updateThreatMoves();
+        this._moveCount = 0;
+        for(const {fromCoords, toCoords} of moveList) {
+            if(!areCoordinatesValid(fromCoords) || !areCoordinatesValid(toCoords))
+                return false;
+            const piece = this.getTile(fromCoords).piece;
+            if(piece == null)
+                return false;
+            piece.move(this, toCoords);
+            this._moveCount++;
+        }
+        return true;
     }
 
     /** Returns the tile specified by the given coordinates */
@@ -108,8 +133,7 @@ export class Board implements IBoard {
     }
 
     /** Returns all of the possible moves for the player of the given color */
-    public generateAllPossibleMoves(playerColor: PieceColor): 
-    {fromCoords: ICoordinates, toCoords: ICoordinates}[] {
+    public generateAllPossibleMoves(playerColor: PieceColor): {fromCoords: ICoordinates, toCoords: ICoordinates}[] {
         let fullMoves: {fromCoords: ICoordinates, toCoords: ICoordinates}[] = [];
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {

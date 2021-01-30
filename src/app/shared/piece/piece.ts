@@ -62,11 +62,7 @@ export abstract class Piece {
         return moves;
     }
 
-    public move(board: IBoard, toCoords: ICoordinates): void {
-        // if(board.moveCount !== 0) {
-        //     console.log('MOVE: ', toCoords, board.getTile(toCoords));
-        // } 
-        
+    public move(board: IBoard, toCoords: ICoordinates): void {        
         const fromTile = this._tile;
         const toTile = board.getTile(toCoords);
         toTile.piece = fromTile.piece;

@@ -1,6 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
-import { PieceColor } from '@app/shared/piece/piece-color';
 
 @Component({
     selector: 'app-play-options',
@@ -55,7 +54,6 @@ import { PieceColor } from '@app/shared/piece/piece-color';
     ]
 })
 export class PlayOptionsComponent implements OnInit {
-
     public readonly secondsToThinkOptions = [60, 180, 300, 600, 1800] as const;
     public readonly secondsIncrementOptions = [0, 2, 5, 10, 20] as const;
     public readonly flipBoardOptions = [true, false] as const;
