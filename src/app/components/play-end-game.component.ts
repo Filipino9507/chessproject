@@ -17,7 +17,7 @@ import { PieceColor } from '@app/shared/piece/piece-color';
                 <p *ngSwitchCase="GameResultReason.STALEMATE">Stalemate</p>
                 <p *ngSwitchCase="GameResultReason.REPETITION">Draw by repetition</p>
                 <p *ngSwitchCase="GameResultReason.FIFTY_MOVE_RULE">Draw by fifty-move rule</p>
-                <p *ngSwitchCase="GameResultReason.AGREEMENT">Draw on agreement</p>
+                <p *ngSwitchCase="GameResultReason.AGREEMENT">Draw by agreement</p>
             </div>
             <p *ngIf="gameResults.winner != null">
                 Winner: {{ gameResults.winner === PieceColor.WHITE ? 'White': 'Black' }}

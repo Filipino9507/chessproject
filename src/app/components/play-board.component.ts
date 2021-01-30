@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
 import { Board } from '@app/shared/board';
-import { areCoordinatesInArray, isKingSafeOnBoard } from '@app/shared/board-utility';
+import { areCoordinatesInArray, BOARD_DIMEN, isKingSafeOnBoard } from '@app/shared/board-utility';
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
@@ -20,23 +20,26 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
         <div id="main-container">
             <nb-card>
                 <nb-card-body id="board-container">
-                    <div class="board-rank" *ngFor="let _ of board.tileArray; let rank = index; let evenRank = even">
-                        <button 
-                            *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
-                            [ngClass]="[
-                                'tile', 
-                                evenRank === evenFile ? 'white-tile' : 'black-tile',
-                                board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
-                            ]"
-                            (click)="clickTile({rank: rank, file: file})">
-                            {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
-                        </button>
+                    <div class="board-rank" *ngFor="let _ of board.tileArray; let _rank = index; let evenRank = even">
+                        <div class="board-rank" *ngVar="getDisplayedRank(_rank) as rank">
+                            <button 
+                                *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
+                                [ngClass]="[
+                                    'tile', 
+                                    evenRank === evenFile ? 'white-tile' : 'black-tile',
+                                    board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
+                                ]"
+                                (click)="clickTile({rank: rank, file: file})">
+                                {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
+                            </button>
+                        </div> 
+                        
                     </div>
                 </nb-card-body>
             </nb-card>
             <nb-card>
                 <nb-card-body id="side-container">
-                    <h3 class="timer"> Time left: {{ Math.floor(secondsLeft[1] / 60) }}:{{ secondsLeft[1] % 60 | number: '2.0-0' }} </h3>
+                    <h3 class="timer"> Time left: {{ getDisplayedTimer(0) }} </h3>
                     <nb-card status="primary">
                         <nb-card-header>Game controls</nb-card-header>
                         <nb-card-body class="ui-container" *ngIf="confirmationDialogMode === EConfirmationDialogMode.NONE">
@@ -85,7 +88,7 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                             </button>
                         </nb-card-body>
                     </nb-card>
-                    <h3 class="timer"> Time left: {{ Math.floor(secondsLeft[0] / 60) }}:{{ secondsLeft[0] % 60 | number: '2.0-0' }} </h3>
+                    <h3 class="timer">Time left: {{ getDisplayedTimer(1) }} </h3>
                 </nb-card-body>
             </nb-card> 
         </div>
@@ -259,6 +262,23 @@ export class PlayBoardComponent implements OnInit {
     private _passActivePlayerColors(): void {
         this._activePlayerColor = this._activePlayerColor === PieceColor.WHITE ? 
             PieceColor.BLACK : PieceColor.WHITE;
+    }
+
+    /** Gets displayed rank from actual rank */
+    public getDisplayedRank(rank: number): number {
+        if(this.gameSettings.flipBoard)
+            return this._activePlayerColor === PieceColor.WHITE ? rank : BOARD_DIMEN - rank - 1;
+        return rank;
+    }
+
+    /** Gets displayed timer */
+    public getDisplayedTimer(timerIdx: PieceColor) {
+        const playerColor = this.gameSettings.flipBoard 
+            ? (timerIdx + this._activePlayerColor + 1) % 2
+            : (timerIdx + 1) % 2;
+        const minutes = Math.floor(this.secondsLeft[playerColor] / 60);
+        const seconds = this.secondsLeft[playerColor] % 60;
+        return `${minutes}:${seconds === 0 ? '00' : seconds}`;
     }
 
     /** Confirms dialog */

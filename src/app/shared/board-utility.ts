@@ -1,7 +1,6 @@
 import { IBoard } from '@app/shared/board-interface';
 import { ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
-import { King } from '@app/shared/piece/king';
 
 export const BOARD_DIMEN = 8;
 

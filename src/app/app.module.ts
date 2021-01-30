@@ -20,15 +20,17 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { PagesModule } from './pages/pages.module';
 import { ComponentsModule } from './components/components.module';
 
-import { PlayComponent } from './pages/play.component';
-import { OptionsComponent } from './pages/options.component';
-import { HomeComponent } from './pages/home.component';
-import { PageNotFoundComponent } from './pages/page-not-found.component';
-import { AboutComponent } from './pages/about.component';
-import { PlayOptionsComponent } from './components/play-options.component';
-import { PlayBoardComponent } from './components/play-board.component';
-import { PromotionDialogComponent } from './components/promotion-dialog.component';
-import { PlayEndGameComponent } from './components/play-end-game.component';
+import { PlayComponent } from '@app/pages/play.component';
+import { OptionsComponent } from '@app/pages/options.component';
+import { HomeComponent } from '@app/pages/home.component';
+import { PageNotFoundComponent } from '@app/pages/page-not-found.component';
+import { AboutComponent } from '@app/pages/about.component';
+import { PlayOptionsComponent } from '@app/components/play-options.component';
+import { PlayBoardComponent } from '@app/components/play-board.component';
+import { PromotionDialogComponent } from '@app/components/promotion-dialog.component';
+import { PlayEndGameComponent } from '@app/components/play-end-game.component';
+
+import { VarDirective } from '@app/directives/ng-var.directive';
 
 @NgModule({
     declarations: [
@@ -41,7 +43,8 @@ import { PlayEndGameComponent } from './components/play-end-game.component';
         PlayOptionsComponent,
         PlayBoardComponent,
         PromotionDialogComponent,
-        PlayEndGameComponent
+        PlayEndGameComponent,
+        VarDirective
     ],
     imports: [
         BrowserModule,
