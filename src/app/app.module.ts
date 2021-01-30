@@ -9,6 +9,7 @@ import {
     NbSidebarModule, 
     NbMenuModule, 
     NbButtonModule,
+    NbInputModule,
     NbSelectModule,
     NbDialogModule
 } from '@nebular/theme';
@@ -58,6 +59,7 @@ import { VarDirective } from '@app/directives/ng-var.directive';
         NbLayoutModule,
         NbCardModule,
         NbButtonModule,
+        NbInputModule,
         NbSelectModule,
         NbEvaIconsModule,
         PagesModule,

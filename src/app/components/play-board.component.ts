@@ -42,7 +42,7 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                     <h3 class="timer"> Time left: {{ getDisplayedTimer(0) }} </h3>
                     <nb-card status="primary">
                         <nb-card-header>Game controls</nb-card-header>
-                        <nb-card-body class="ui-container" *ngIf="confirmationDialogMode === EConfirmationDialogMode.NONE">
+                        <nb-card-body class="ui-container-v" *ngIf="confirmationDialogMode === EConfirmationDialogMode.NONE">
                             <button 
                                 class="game-control" 
                                 nbButton
@@ -67,14 +67,8 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                                 (click)="confirmationDialogMode = EConfirmationDialogMode.TAKEBACK">
                                 Propose takeback
                             </button>
-                            <input
-                                #self
-                                nbInput
-                                type="file"
-                                (change)="loadGame(self)" 
-                            />
                         </nb-card-body>
-                        <nb-card-body class="ui-container" *ngIf="confirmationDialogMode !== EConfirmationDialogMode.NONE">
+                        <nb-card-body class="ui-container-v" *ngIf="confirmationDialogMode !== EConfirmationDialogMode.NONE">
                             <p>{{ getConfirmationDialogString() }}</p>
                             <button 
                                 class="game-control" 
@@ -92,6 +86,20 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                                 (click)="cancelDialog()">
                                 No
                             </button>
+                        </nb-card-body>
+                        <nb-card-body class="ui-conteiner-v">
+                            <p>Load game:</p>
+                            <input
+                                #self
+                                nbButton
+                                type="file"
+                                (change)="loadGame(self)" />
+                            <p>Save game:</p>
+                            <input
+                                #self
+                                nbButton
+                                type="file"
+                                (change)="saveGame(self)" />
                         </nb-card-body>
                     </nb-card>
                     <h3 class="timer">Time left: {{ getDisplayedTimer(1) }} </h3>
@@ -111,9 +119,13 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
             display: flex;
             flex-direction: column;
         }
-        .ui-container {
+        .ui-container-v {
             display: flex;
             flex-direction: column;
+        }
+        .ui-container-h {
+            display: flex;
+            flex-direction: row;
         }
         #board-container {
             margin: 0 auto;
@@ -148,6 +160,10 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
         }
         button.highlighted-tile {
             background-color: rgba(255, 0, 0, 0.76);
+        }
+        
+        input[type="file"] {
+            color: transparent;
         }`
     ]
 })
@@ -379,7 +395,7 @@ export class PlayBoardComponent implements OnInit {
     }
 
     /** Saves game */
-    public saveGame(): void {
+    public saveGame(target: HTMLInputElement): void {
 
     }
 }
