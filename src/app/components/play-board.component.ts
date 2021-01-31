@@ -387,7 +387,12 @@ export class PlayBoardComponent implements OnInit {
 
     /** Triggers takeback */
     public takeMoveBack(): void {
-        
+        this._playedMoves.pop();
+        this.board.loadGame(this._playedMoves);
+        this._selectedTile = null;
+        this._selectedTilePossibilities = null;
+        this.confirmationDialogMode = EConfirmationDialogMode.NONE;
+        this._activePlayerColor = this._playedMoves.length % 2;
     }
 
     /** Loads game */
