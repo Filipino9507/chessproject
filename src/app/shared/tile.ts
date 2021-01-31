@@ -11,3 +11,8 @@ export interface ITile {
     piece: Piece;
     threatenedBy: Set<Piece>;
 }
+
+export interface IMove {
+    fromCoords: ICoordinates,
+    toCoords: ICoordinates
+}

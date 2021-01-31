@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
 import { Board } from '@app/shared/board';
 import { areCoordinatesInArray, BOARD_DIMEN, isKingSafeOnBoard } from '@app/shared/board-utility';
-import { ITile, ICoordinates } from '@app/shared/tile';
+import { ITile, ICoordinates, IMove } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
 import { EGameResultReason } from '@app/shared/game-result-reason';
@@ -95,11 +95,11 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                                 type="file"
                                 (change)="loadGame(self)" />
                             <p>Save game:</p>
-                            <input
-                                #self
+                            <button 
                                 nbButton
-                                type="file"
-                                (change)="saveGame(self)" />
+                                (click)="saveGame()">
+                                Choose file
+                            </button>
                         </nb-card-body>
                     </nb-card>
                     <h3 class="timer">Time left: {{ getDisplayedTimer(1) }} </h3>
@@ -187,6 +187,9 @@ export class PlayBoardComponent implements OnInit {
     /** Possibilities of movement from the currently selected tile */
     private _selectedTilePossibilities: ICoordinates[];
 
+    /** Played moves since the beginning of the game */
+    private _playedMoves: IMove[];
+
     /** The type of dialog which is currently going on */
     public confirmationDialogMode: EConfirmationDialogMode;
 
@@ -211,6 +214,7 @@ export class PlayBoardComponent implements OnInit {
         this._activePlayerColor = PieceColor.WHITE;
         this._selectedTile = null;
         this._selectedTilePossibilities = null;
+        this._playedMoves = [];
         this.confirmationDialogMode = EConfirmationDialogMode.NONE;
     }
 
@@ -258,6 +262,10 @@ export class PlayBoardComponent implements OnInit {
             toTile.piece.color === this._activePlayerColor;
 
         if(areCoordinatesInArray(coords, this._selectedTilePossibilities) && !hasSameColorPiece) {
+            this._playedMoves.push({
+                fromCoords: this._selectedTile.coords, 
+                toCoords: coords
+            });
             this._selectedTile.piece.move(this.board, coords);
             this._handlePassTurn();
         }
@@ -395,7 +403,8 @@ export class PlayBoardComponent implements OnInit {
     }
 
     /** Saves game */
-    public saveGame(target: HTMLInputElement): void {
-
+    public saveGame(): void {
+        const representation = this.gameRepresentationManager.toRepresentation(this._playedMoves);
+        this.gameRepresentationManager.writeFile(representation, 'game.txt');
     }
 }

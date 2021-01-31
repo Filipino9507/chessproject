@@ -38,29 +38,6 @@ export class Board implements IBoard {
         // this.loadGame('6444')
     }
 
-    /** Loads game from a string of moves */
-    public loadGame(moveList: {fromCoords: ICoordinates, toCoords: ICoordinates}[]): boolean {
-        console.log('BBBB');
-        this._initializeTileArray();
-        this.updateThreatMoves();
-        this._moveCount = 0;
-        for(const {fromCoords, toCoords} of moveList) {
-            if(!areCoordinatesValid(fromCoords) || !areCoordinatesValid(toCoords))
-                return false;
-            const piece = this.getTile(fromCoords).piece;
-            if(piece == null)
-                return false;
-            piece.move(this, toCoords);
-            this._moveCount++;
-        }
-        return true;
-    }
-
-    /** Returns the tile specified by the given coordinates */
-    public getTile(coords: ICoordinates): ITile {
-        return this._tileArray[coords.rank][coords.file];
-    }
-
     /** Initializes the _tileArray with the starting pieces */
     private _initializeTileArray(): void {
         this._tileArray = new Array(Board.BOARD_DIMEN);
@@ -69,7 +46,6 @@ export class Board implements IBoard {
             const color = rank > 3 ? PieceColor.WHITE : PieceColor.BLACK;
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 let piece: Piece;
-                const tile = this._tileArray[rank][file];
                 switch(rank) {
                     case 0: case 7:
                         switch(file) {
@@ -93,6 +69,28 @@ export class Board implements IBoard {
                     this._tileArray[rank][file].piece.tile = this._tileArray[rank][file];
             }
         }
+    }
+
+    /** Loads game from a string of moves */
+    public loadGame(moveList: {fromCoords: ICoordinates, toCoords: ICoordinates}[]): boolean {
+        this._initializeTileArray();
+        this.updateThreatMoves();
+        this._moveCount = 0;
+        for(const {fromCoords, toCoords} of moveList) {
+            if(!areCoordinatesValid(fromCoords) || !areCoordinatesValid(toCoords))
+                return false;
+            const piece = this.getTile(fromCoords).piece;
+            if(piece == null)
+                return false;
+            piece.move(this, toCoords);
+            this._moveCount++;
+        }
+        return true;
+    }
+
+    /** Returns the tile specified by the given coordinates */
+    public getTile(coords: ICoordinates): ITile {
+        return this._tileArray[coords.rank][coords.file];
     }
 
     /** Clears threat indicators from tiles */
