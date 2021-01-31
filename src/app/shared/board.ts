@@ -1,5 +1,5 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
-import { ITile, ICoordinates } from '@app/shared/tile';
+import { ITile, ICoordinates, IMove } from '@app/shared/tile';
 import { 
     generateBoardAfterMove, 
     isKingSafeOnBoard,
@@ -29,13 +29,15 @@ export class Board implements IBoard {
     /** Holds the current move count */
     private _moveCount: number;
 
+    /** Played moves since the beginning of the game */
+    private _playedMoves: IMove[];
+
     /** Constructor */
     constructor() {
         this._initializeTileArray();
         this.updateThreatMoves();
         this._moveCount = 0;
-
-        // this.loadGame('6444')
+        this._playedMoves = [];
     }
 
     /** Initializes the _tileArray with the starting pieces */
@@ -71,11 +73,18 @@ export class Board implements IBoard {
         }
     }
 
+    /** Takes one move back */
+    public takeMoveBack(): void {
+        this._playedMoves.pop();
+        this.loadGame(this._playedMoves);
+    }
+
     /** Loads game from a string of moves */
-    public loadGame(moveList: {fromCoords: ICoordinates, toCoords: ICoordinates}[]): boolean {
+    public loadGame(moveList: IMove[]): boolean {
         this._initializeTileArray();
         this.updateThreatMoves();
         this._moveCount = 0;
+        this._playedMoves = [];
         for(const {fromCoords, toCoords} of moveList) {
             if(!areCoordinatesValid(fromCoords) || !areCoordinatesValid(toCoords))
                 return false;
@@ -83,6 +92,7 @@ export class Board implements IBoard {
             if(piece == null)
                 return false;
             piece.move(this, toCoords);
+            this._playedMoves.push({fromCoords, toCoords});
             this._moveCount++;
         }
         return true;
@@ -130,8 +140,8 @@ export class Board implements IBoard {
     }
 
     /** Returns all of the possible moves for the player of the given color */
-    public generateAllPossibleMoves(playerColor: PieceColor): {fromCoords: ICoordinates, toCoords: ICoordinates}[] {
-        let fullMoves: {fromCoords: ICoordinates, toCoords: ICoordinates}[] = [];
+    public generateAllPossibleMoves(playerColor: PieceColor): IMove[] {
+        let fullMoves = [];
         for(let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
             for(let file = 0; file < Board.BOARD_DIMEN; file++) {
                 const fromCoords: ICoordinates = {rank, file};
@@ -205,6 +215,11 @@ export class Board implements IBoard {
     /** Setter for _moveCount */
     public set moveCount(value: number) {
         this._moveCount = value;
-    } 
+    }
+
+    /** Getter for _playedMoves */
+    public get playedMoves(): IMove[] {
+        return this._playedMoves;
+    }
  }
  
