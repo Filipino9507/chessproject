@@ -44,10 +44,15 @@ export class King extends Piece {
             const destinationCoords = addCoordinates(
                 fromCoords, {rank: 0, file: 2 * direction}
             );
+
+            const needToBeEmpty = [betweenCoords];
+            if(direction === -1)
+                needToBeEmpty.push(addCoordinates(fromCoords, {rank: 0, file: -3}));
+            const isPathEmpty = needToBeEmpty.every(coords => board.getTile(coords).piece == null);
+
             if(board.accessibleByKing(fromCoords, this._color) &&
                 board.accessibleByKing(betweenCoords, this._color) && 
-                board.accessibleByKing(destinationCoords, this._color) &&
-                board.getTile(betweenCoords).piece == null)
+                board.accessibleByKing(destinationCoords, this._color) && isPathEmpty)
                 moves.push(destinationCoords);
         }
         return moves;
