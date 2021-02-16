@@ -1,5 +1,5 @@
-import { Component, NgModule } from '@angular/core';
-import { NbMenuComponent, NbMenuItem, NbSidebarService } from '@nebular/theme';
+import { Component } from '@angular/core';
+import { NbMenuItem, NbSidebarService } from '@nebular/theme';
 
 @Component({
     selector: 'app-root',
@@ -45,11 +45,7 @@ export class AppComponent {
         {
             title: 'Play',
             icon: 'play-circle-outline',
-            children: [
-                {title: 'Against AI', link: '/play-ai'},
-                {title: 'Against another player', link: '/play-another'},
-                {title: 'Against a random player', link: '/play-random'},
-            ],
+            link: '/play'
         },
         {
             title: 'Options',

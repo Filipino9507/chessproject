@@ -26,7 +26,8 @@ export class Knight extends Piece {
             addCoordinates(fromCoords, {file: -2, rank: -1}),
             addCoordinates(fromCoords, {file: -2, rank: 1}),
         ]) {
-            if(areCoordinatesValid(toCoords)) moves.push(toCoords);
+            if(areCoordinatesValid(toCoords))
+                moves.push(toCoords);
         }
         return moves;
     }

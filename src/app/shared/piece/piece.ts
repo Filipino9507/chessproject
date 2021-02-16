@@ -1,6 +1,6 @@
 import { IBoard } from '@app/shared/board-interface';
 import { BOARD_DIMEN, addCoordinates, scaleCoordinates, areCoordinatesValid } from '@app/shared/board-utility';
-import { ITile, ICoordinates } from '@app/shared/tile';
+import { ITile, ICoordinates, IMove, ECastling } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 
 export abstract class Piece {
@@ -62,13 +62,21 @@ export abstract class Piece {
         return moves;
     }
 
-    public move(board: IBoard, toCoords: ICoordinates): void {        
+    public move(board: IBoard, toCoords: ICoordinates): IMove {
         const fromTile = this._tile;
         const toTile = board.getTile(toCoords);
+        const capture = toTile.piece != null;
         toTile.piece = fromTile.piece;
         fromTile.piece = null;
         this._tile = toTile;
         this._hasMoved = true;
+        return {
+            fromCoords: fromTile.coords,
+            toCoords,
+            pieceSymbol: this.symbol,
+            capture,
+            castling: ECastling.NONE
+        };
     }
 
     public get color(): PieceColor {

@@ -46,7 +46,7 @@ export class Pawn extends Piece {
         ]) {
             if(areCoordinatesValid(toCoords)) {
                 const piece = board.getTile(toCoords).piece;
-                if ((piece != null && piece.color !== this._color) || canGoToEmpty) {
+                if((piece != null && piece.color !== this._color) || canGoToEmpty) {
                     moves.push(toCoords);
                 }
             }
@@ -77,20 +77,21 @@ export class Pawn extends Piece {
 
     protected _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateNormalMoves(board, fromCoords)
-        .concat(this._generateFirstRowMoves(board, fromCoords)
-        .concat(this._generateCaptureMoves(board, fromCoords, false)
-        .concat(this._generateEnPassantMoves(board, fromCoords))));
+            .concat(this._generateFirstRowMoves(board, fromCoords)
+            .concat(this._generateCaptureMoves(board, fromCoords, false)
+            .concat(this._generateEnPassantMoves(board, fromCoords))));
     }
 
     public movementDirection(): 1 | -1 {
         return this._color === PieceColor.WHITE ? -1 : 1;
     }
 
-    public move(board: IBoard, toCoords: ICoordinates): void {
+    public move(board: IBoard, toCoords: ICoordinates): IMove {
         this._markFirstRowMove(board, toCoords);
         this._attemptEnPassant(board, toCoords);
-        super.move(board, toCoords);
+        const mv = super.move(board, toCoords);
         this._attemptPromotion(toCoords);
+        return mv;
     }
 
     private _markFirstRowMove(board: IBoard, toCoords: ICoordinates): void {

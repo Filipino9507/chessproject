@@ -8,6 +8,6 @@ import { Component, OnInit } from '@angular/core';
     styles: []
 })
 export class OptionsComponent implements OnInit {
-    constructor() {}
-    ngOnInit(): void {}
+    public constructor() { }
+    public ngOnInit(): void { }
 }

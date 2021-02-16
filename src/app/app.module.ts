@@ -28,7 +28,6 @@ import { PageNotFoundComponent } from '@app/pages/page-not-found.component';
 import { AboutComponent } from '@app/pages/about.component';
 import { PlayOptionsComponent } from '@app/components/play-options.component';
 import { PlayBoardComponent } from '@app/components/play-board.component';
-import { PromotionDialogComponent } from '@app/components/promotion-dialog.component';
 import { PlayEndGameComponent } from '@app/components/play-end-game.component';
 
 import { VarDirective } from '@app/directives/ng-var.directive';
@@ -43,7 +42,6 @@ import { VarDirective } from '@app/directives/ng-var.directive';
         AboutComponent,
         PlayOptionsComponent,
         PlayBoardComponent,
-        PromotionDialogComponent,
         PlayEndGameComponent,
         VarDirective
     ],

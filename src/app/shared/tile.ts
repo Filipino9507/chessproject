@@ -13,6 +13,15 @@ export interface ITile {
 }
 
 export interface IMove {
-    fromCoords: ICoordinates,
-    toCoords: ICoordinates
+    fromCoords: ICoordinates;
+    toCoords: ICoordinates;
+    pieceSymbol: string;
+    capture: boolean;
+    castling: ECastling
+}
+
+export enum ECastling {
+    NONE,
+    KING_SIDE,
+    QUEEN_SIDE
 }

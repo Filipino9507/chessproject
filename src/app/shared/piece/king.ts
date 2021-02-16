@@ -1,6 +1,6 @@
 import { IBoard } from '@app/shared/board-interface';
 import { BOARD_DIMEN, areCoordinatesValid, addCoordinates } from '@app/shared/board-utility';
-import { ICoordinates } from '@app/shared/tile';
+import { ECastling, ICoordinates, IMove } from '@app/shared/tile';
 import { Piece } from '@app/shared/piece/piece';
 import { Rook } from '@app/shared/piece/rook';
 
@@ -67,22 +67,27 @@ export class King extends Piece {
         return this._generateKingMoves(fromCoords);
     }
 
-    public move(board: IBoard, toCoords: ICoordinates): void {
-        this._attemptCastling(board, toCoords);
-        super.move(board, toCoords);
+    public move(board: IBoard, toCoords: ICoordinates): IMove {
+        const castling = this._attemptCastling(board, toCoords);
+        const mv = super.move(board, toCoords);
+        mv.castling = castling;
+        return mv;
     }
 
-    private _attemptCastling(board: IBoard, toCoords: ICoordinates): void {
+    private _attemptCastling(board: IBoard, toCoords: ICoordinates): ECastling {
         const fromCoords = this._tile.coords;
         const dFile = toCoords.file - fromCoords.file;
         if(Math.abs(dFile) === 2) {
             if(dFile > 0) {
                 const rook = board.getTile(addCoordinates(fromCoords, {rank: 0, file: 3})).piece;
                 rook.move(board, addCoordinates(fromCoords, {rank: 0, file: 1}));
+                return ECastling.KING_SIDE;
             } else {
                 const rook = board.getTile(addCoordinates(fromCoords, {rank: 0, file: -4})).piece;
                 rook.move(board, addCoordinates(fromCoords, {rank: 0, file: -1}));
+                return ECastling.QUEEN_SIDE;
             }
         }
+        return ECastling.NONE;
     }
 }

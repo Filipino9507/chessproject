@@ -7,6 +7,7 @@ import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
 import { EGameResultReason } from '@app/shared/game-result-reason';
 import { GameRepresentationManager } from '@app/shared/game-representation-manager';
+import { Piece } from '@app/shared/piece/piece';
 
 
 enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
@@ -18,11 +19,11 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
 @Component({
     selector: 'app-play-board',
     template: `
-        <div id="main-container">
+        <div class="container-h">
             <nb-card>
-                <nb-card-body id="board-container">
-                    <div class="board-rank" *ngFor="let _ of board.tileArray; let _rank = index; let evenRank = even">
-                        <div class="board-rank" *ngVar="getDisplayedRank(_rank) as rank">
+                <nb-card-body id="board-container" class="container-v">
+                    <div class="container-h" *ngFor="let _ of board.tileArray; let _rank = index; let evenRank = even">
+                        <div class="container-h" *ngVar="getDisplayedRank(_rank) as rank">
                             <button 
                                 *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
                                 [ngClass]="[
@@ -42,11 +43,11 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                     <h3 class="timer"> Time left: {{ getDisplayedTimer(0) }} </h3>
                     <nb-card status="primary">
                         <nb-card-header>Game controls</nb-card-header>
-                        <nb-card-body class="ui-container-v" *ngIf="confirmationDialogMode === EConfirmationDialogMode.NONE">
+                        <nb-card-body class="container-v" *ngIf="confirmationDialogMode === EConfirmationDialogMode.NONE">
                             <button 
                                 class="game-control" 
                                 nbButton
-                                size="medium" 
+                                size="small" 
                                 status="primary"
                                 (click)="confirmationDialogMode = EConfirmationDialogMode.RESIGN">
                                 Resign
@@ -54,7 +55,7 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                             <button 
                                 class="game-control" 
                                 nbButton 
-                                size="medium" 
+                                size="small" 
                                 status="primary"
                                 (click)="confirmationDialogMode = EConfirmationDialogMode.DRAW">
                                 Offer draw
@@ -62,18 +63,18 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                             <button 
                                 class="game-control" 
                                 nbButton 
-                                size="medium" 
+                                size="small" 
                                 status="primary"
                                 (click)="confirmationDialogMode = EConfirmationDialogMode.TAKEBACK">
                                 Propose takeback
                             </button>
                         </nb-card-body>
-                        <nb-card-body class="ui-container-v" *ngIf="confirmationDialogMode !== EConfirmationDialogMode.NONE">
-                            <p>{{ getConfirmationDialogString() }}</p>
+                        <nb-card-body class="container-v" *ngIf="confirmationDialogMode !== EConfirmationDialogMode.NONE">
+                            <p>{{ getDisplayedConfirmationDialogString() }}</p>
                             <button 
                                 class="game-control" 
                                 nbButton
-                                size="medium" 
+                                size="small" 
                                 status="primary"
                                 (click)="confirmDialog()">
                                 Yes
@@ -81,27 +82,41 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                             <button 
                                 class="game-control" 
                                 nbButton
-                                size="medium" 
+                                size="small" 
                                 status="primary"
                                 (click)="cancelDialog()">
                                 No
                             </button>
                         </nb-card-body>
-                        <nb-card-body class="ui-conteiner-v">
-                            <p>Load game:</p>
+
+                        <nb-card-body>
+                            <textarea
+                                id="game-representation"
+                                nbInput
+                                readonly
+                                [innerHTML]="getDisplayedGameRepresentation()">
+                                Hello world
+                            </textarea>
+                        </nb-card-body>
+
+                        <nb-card-body class="container-v">
                             <input
                                 #self
                                 hidden
                                 type="file"
                                 (change)="loadGame(self)" />
 
-                            <button 
+                            <button
+                                class="game-control"
                                 nbButton
+                                size="small"
                                 (click)="self.click()">
                                 Load game
                             </button>
-                            <button 
+                            <button
+                                class="game-control"
                                 nbButton
+                                size="small"
                                 (click)="saveGame()">
                                 Save game
                             </button>
@@ -113,46 +128,27 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
         </div>
     `,
     styles: [
-        `#main-container {
-            display: flex;
-            flex-direction: row;
-        }`,
-
         `#side-container {
             margin: 0 auto;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-        }
-        .ui-container-v {
-            display: flex;
-            flex-direction: column;
-        }
-        .ui-container-h {
-            display: flex;
-            flex-direction: row;
+            padding: 10px;
         }
         #board-container {
             margin: 0 auto;
-            display: inline-block;
         }
         .timer {
             display: flex;
             justify-content: center;
             align-items: center;
             flex: 1;
+            font-size: 20px;
         }
         button.game-control {
             margin: 5px;
         }`,
 
-        `div.board-rank {
-            height: 75px;
-            display: flex;
-        }
-        button.tile {
-            width: 75px;
-            height: 75px;
+        `button.tile {
+            min-width: 75px;
+            min-height: 75px;
             border: 1px solid black;
             padding: 0px;
             font-size: 70px;
@@ -166,15 +162,14 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
         button.highlighted-tile {
             background-color: rgba(255, 0, 0, 0.76);
         }
-        
-        input[type="file"] {
-            color: transparent;
+        #game-representation {
+            resize: none;
+            min-height: 135px;
         }`
     ]
 })
 export class PlayBoardComponent implements OnInit {
-    /** Allows usage inside component */
-    // public Math = Math;
+
     public EConfirmationDialogMode = EConfirmationDialogMode;
 
     /** Board object */
@@ -263,11 +258,9 @@ export class PlayBoardComponent implements OnInit {
             toTile.piece.color === this._activePlayerColor;
 
         if(areCoordinatesInArray(coords, this._selectedTilePossibilities) && !hasSameColorPiece) {
-            this._selectedTile.piece.move(this.board, coords);
-            this.board.playedMoves.push({
-                fromCoords: this._selectedTile.coords,
-                toCoords: coords
-            });
+            const piece = this._selectedTile.piece;
+            const mv = piece.move(this.board, coords);
+            this.board.playedMoves.push(mv);
             this._handlePassTurn();
         }
 
@@ -295,23 +288,6 @@ export class PlayBoardComponent implements OnInit {
             PieceColor.BLACK : PieceColor.WHITE;
     }
 
-    /** Gets displayed rank from actual rank */
-    public getDisplayedRank(rank: number): number {
-        if(this.gameSettings.flipBoard)
-            return this._activePlayerColor === PieceColor.WHITE ? rank : BOARD_DIMEN - rank - 1;
-        return rank;
-    }
-
-    /** Gets displayed timer */
-    public getDisplayedTimer(timerIdx: PieceColor) {
-        const playerColor = this.gameSettings.flipBoard 
-            ? (timerIdx + this._activePlayerColor + 1) % 2
-            : (timerIdx + 1) % 2;
-        const minutes = Math.floor(this.secondsLeft[playerColor] / 60);
-        const seconds = this.secondsLeft[playerColor] % 60;
-        return `${minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`;
-    }
-
     /** Confirms dialog */
     public confirmDialog(): void {
         switch(this.confirmationDialogMode) {
@@ -326,20 +302,6 @@ export class PlayBoardComponent implements OnInit {
                 break;
             default:
                 break;
-        }
-    }
-
-    /** Gets confirmation dialog string */
-    public getConfirmationDialogString(): string {
-        switch(this.confirmationDialogMode) {
-            case EConfirmationDialogMode.RESIGN:
-                return 'Do you really want to resign?';
-            case EConfirmationDialogMode.DRAW:
-                return 'Does the other player want to draw?';
-            case EConfirmationDialogMode.TAKEBACK:
-                return 'Does the other player accept the takeback?';
-            default:
-                return '';
         }
     }
 
@@ -411,5 +373,41 @@ export class PlayBoardComponent implements OnInit {
     public saveGame(): void {
         const representation = this.gameRepresentationManager.toRepresentation(this.board.playedMoves);
         this.gameRepresentationManager.writeFile(representation, 'game.txt');
+    }
+
+    /** Gets displayed rank from actual rank */
+    public getDisplayedRank(rank: number): number {
+        if(this.gameSettings.flipBoard)
+            return this._activePlayerColor === PieceColor.WHITE ? rank : BOARD_DIMEN - rank - 1;
+        return rank;
+    }
+
+    /** Gets displayed timer */
+    public getDisplayedTimer(timerIdx: PieceColor) {
+        const playerColor = this.gameSettings.flipBoard 
+            ? (timerIdx + this._activePlayerColor + 1) % 2
+            : (timerIdx + 1) % 2;
+        const minutes = Math.floor(this.secondsLeft[playerColor] / 60);
+        const seconds = this.secondsLeft[playerColor] % 60;
+        return `${minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`;
+    }
+
+    /** Gets confirmation dialog string */
+    public getDisplayedConfirmationDialogString(): string {
+        switch(this.confirmationDialogMode) {
+            case EConfirmationDialogMode.RESIGN:
+                return 'Do you really want to resign?';
+            case EConfirmationDialogMode.DRAW:
+                return 'Does the opponent agree to draw?';
+            case EConfirmationDialogMode.TAKEBACK:
+                return 'Does the opponent accept the takeback?';
+            default:
+                return '';
+        }
+    }
+
+    /** Gets displayed game representat5ion string */
+    public getDisplayedGameRepresentation(): string {
+        return this.gameRepresentationManager.toHumanRepresentation(this.board);
     }
 }

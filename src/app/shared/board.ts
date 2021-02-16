@@ -91,8 +91,8 @@ export class Board implements IBoard {
             const piece = this.getTile(fromCoords).piece;
             if(piece == null)
                 return false;
-            piece.move(this, toCoords);
-            this._playedMoves.push({fromCoords, toCoords});
+            const mv = piece.move(this, toCoords);
+            this._playedMoves.push(mv);
             this._moveCount++;
         }
         return true;

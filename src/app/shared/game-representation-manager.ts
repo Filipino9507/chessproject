@@ -1,5 +1,6 @@
-import { Injectable } from "@angular/core";
-import { ICoordinates, IMove } from "@app/shared/tile";
+import { Injectable } from '@angular/core';
+import { ECastling, IMove } from '@app/shared/tile';
+import { IBoard } from '@app/shared/board-interface';
 
 @Injectable({
     providedIn: 'root'
@@ -61,10 +62,33 @@ export class GameRepresentationManager {
             const toCoords = {rank: tRank, file: tFile};
             moveList.push({fromCoords, toCoords});
         }
-        console.log('MOVE_LIST: ', moveList);
         return moveList;
     }
+
+    private _getMoveHumanRepr(move: IMove): string {
+        switch(move.castling) {
+            case ECastling.NONE:
+                const fileRepr = String.fromCharCode(move.toCoords.file + 97);
+                const rankRepr = 8 - move.toCoords.rank;
+                const captureRepr = move.capture ? 'x' : '';
+                return move.pieceSymbol + captureRepr + fileRepr + rankRepr;
+            case ECastling.KING_SIDE:
+                return 'O-O';
+            case ECastling.QUEEN_SIDE:
+                return 'O-O-O';
+        }
+    }
+
+    public toHumanRepresentation(board: IBoard): string {
+        const playedMoves = board.playedMoves;
+        const len = playedMoves.length;
+        let repr = '';
+        for(let i = 0; i < len; i++) {
+            if(i % 2 === 0) 
+                repr += (i / 2 + 1).toString() + '. ';
+            repr += this._getMoveHumanRepr(playedMoves[i]);
+            repr += i % 2 === 0 ? '\t\t' : '\n';
+        }
+        return repr;
+    }
 }
-
-
-
