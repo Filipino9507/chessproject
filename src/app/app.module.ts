@@ -22,7 +22,6 @@ import { PagesModule } from './pages/pages.module';
 import { ComponentsModule } from './components/components.module';
 
 import { PlayComponent } from '@app/pages/play.component';
-import { OptionsComponent } from '@app/pages/options.component';
 import { HomeComponent } from '@app/pages/home.component';
 import { PageNotFoundComponent } from '@app/pages/page-not-found.component';
 import { AboutComponent } from '@app/pages/about.component';
@@ -35,7 +34,6 @@ import { VarDirective } from '@app/directives/ng-var.directive';
 @NgModule({
     declarations: [
         AppComponent,
-        OptionsComponent,
         PlayComponent,
         HomeComponent,
         PageNotFoundComponent,

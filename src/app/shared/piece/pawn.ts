@@ -1,6 +1,6 @@
 import { IBoard } from '@app/shared/board-interface';
 import { addCoordinates, areCoordinatesValid } from '@app/shared/board-utility';
-import { ICoordinates } from '@app/shared/tile';
+import { ICoordinates, IMove } from '@app/shared/tile';
 import { Piece } from '@app/shared/piece/piece';
 import { PieceColor } from '@app/shared/piece/piece-color'; 
 import { Queen } from '@app/shared/piece/queen';
@@ -20,7 +20,7 @@ export class Pawn extends Piece {
         let moves: ICoordinates[] = [];
         const toCoords = addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
         if(areCoordinatesValid(toCoords) && board.getTile(toCoords).piece == null) {
-            moves.push(toCoords);
+          moves.push(toCoords);
         }
         return moves;
     }

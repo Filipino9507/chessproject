@@ -23,6 +23,7 @@
     "@nebular/eva-icons": "6.2.1",
     "@nebular/theme": "^6.2.1",
     "@ngx-pwa/local-storage": "^11.1.0",
+    "electron-builder": "^22.10.5",
     "eva-icons": "^1.1.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

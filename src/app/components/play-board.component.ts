@@ -23,17 +23,19 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
             <nb-card>
                 <nb-card-body id="board-container" class="container-v">
                     <div class="container-h" *ngFor="let _ of board.tileArray; let _rank = index; let evenRank = even">
-                        <div class="container-h" *ngVar="getDisplayedRank(_rank) as rank">
-                            <button 
-                                *ngFor="let _ of board.tileArray[rank]; let file = index; let evenFile = even"
-                                [ngClass]="[
-                                    'tile', 
-                                    evenRank === evenFile ? 'white-tile' : 'black-tile',
-                                    board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
-                                ]"
-                                (click)="clickTile({rank: rank, file: file})">
-                                {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
-                            </button>
+                        <div class="container-h" *ngVar="getDisplayedRankOrFile(_rank) as rank">
+                            <div *ngFor="let _ of board.tileArray[rank]; let _file = index; let evenFile = even">
+                                <button 
+                                    *ngVar="getDisplayedRankOrFile(_file) as file"
+                                    [ngClass]="[
+                                        'tile', 
+                                        evenRank === evenFile ? 'white-tile' : 'black-tile',
+                                        board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
+                                    ]"
+                                    (click)="clickTile({rank: rank, file: file})">
+                                    {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
+                                </button>
+                            </div>
                         </div> 
                     </div>
                 </nb-card-body>
@@ -375,11 +377,11 @@ export class PlayBoardComponent implements OnInit {
         this.gameRepresentationManager.writeFile(representation, 'game.txt');
     }
 
-    /** Gets displayed rank from actual rank */
-    public getDisplayedRank(rank: number): number {
+    /** Gets displayed rank from actual rank, or file respectively */
+    public getDisplayedRankOrFile(rankOrFile: number): number {
         if(this.gameSettings.flipBoard)
-            return this._activePlayerColor === PieceColor.WHITE ? rank : BOARD_DIMEN - rank - 1;
-        return rank;
+            return this._activePlayerColor === PieceColor.WHITE ? rankOrFile : BOARD_DIMEN - rankOrFile - 1;
+        return rankOrFile;
     }
 
     /** Gets displayed timer */

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
     selector: 'app-home',
     template: `
-        <h3>Welcome to Chess Press!</h3>
+        <h3>Welcome to Chess!</h3>
 
         <p>
             A simple chess web application made using the Angular framework made by Google.<br>

@@ -7,7 +7,7 @@ import { NbMenuItem, NbSidebarService } from '@nebular/theme';
         <nb-layout>
             <nb-layout-header fixed>
                 <nb-icon (click)="toggleSidebar()" class="sidebar-toggle" icon="menu-2-outline"></nb-icon>
-                <h2>Chess Press</h2>
+                <h2>Chess</h2>
             </nb-layout-header>
 
             <nb-sidebar class="menu-sidebar" responsive start>
@@ -46,11 +46,6 @@ export class AppComponent {
             title: 'Play',
             icon: 'play-circle-outline',
             link: '/play'
-        },
-        {
-            title: 'Options',
-            icon: 'settings-2-outline',
-            link: '/options'
         },
         {
             title: 'About',
