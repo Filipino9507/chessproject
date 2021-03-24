@@ -6,8 +6,8 @@ import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
 import { EGameResultReason } from '@app/shared/game-result-reason';
-import { GameRepresentationManager } from '@app/shared/game-representation-manager';
-import { StateManager } from '@app/shared/state-manager';
+import { GameRepresentationManager } from '@app/injectables/game-representation-manager';
+import { StateManager } from '@app/injectables/state-manager';
 import { Piece } from '@app/shared/piece/piece';
 
 

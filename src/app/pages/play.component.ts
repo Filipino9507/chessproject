@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IGameResults } from '@app/shared/game-results';
 import { IGameSettings } from '@app/shared/game-settings';
 import { EGameState } from '@app/shared/game-state';
-import { StateManager } from '@app/shared/state-manager';
+import { StateManager } from '@app/injectables/state-manager';
 
 @Component({
     selector: 'app-play-menu',

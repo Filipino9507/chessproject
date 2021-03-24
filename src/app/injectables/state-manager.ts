@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { IBoard } from '@app/shared/board/board-interface';
 import { IGameSettings } from '@app/shared/game-settings'; 
-import { IGameResults } from './game-results';
-import { EGameState } from './game-state';
-import { PieceColor } from './piece/piece-color';
-import { IMove } from './tile';
+import { IGameResults } from '../shared/game-results';
+import { EGameState } from '../shared/game-state';
+import { PieceColor } from '../shared/piece/piece-color';
+import { IMove } from '../shared/tile';
 
 enum EStateKey {
   GAME_SETTINGS = 'GAME_SETTINGS',
