@@ -1,5 +1,5 @@
-import { IBoard } from '@app/shared/board-interface';
-import { BOARD_DIMEN, areCoordinatesValid, addCoordinates } from '@app/shared/board-utility';
+import { IBoard } from '@app/shared/board/board-interface';
+import { BOARD_DIMEN, areCoordinatesValid, addCoordinates } from '@app/shared/board/board-utility';
 import { ECastling, ICoordinates, IMove } from '@app/shared/tile';
 import { Piece } from '@app/shared/piece/piece';
 import { Rook } from '@app/shared/piece/rook';

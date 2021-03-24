@@ -51,8 +51,11 @@ export class PlayComponent implements OnInit {
     public ngOnInit(): void {
         const storedGameState = this._stateManager.gameState;
         const storedGameSettings = this._stateManager.gameSettings;
+        const storedGameResults = this._stateManager.gameResults;
         if(storedGameSettings)
             this.gameSettings = storedGameSettings;
+        if(storedGameResults)
+            this.gameResults = storedGameResults;
         this.gameState = storedGameState ? storedGameState : EGameState.PRE_GAME;
     }
 
@@ -69,10 +72,12 @@ export class PlayComponent implements OnInit {
 
     public endGame(gameResults: IGameResults): void {
         this.gameResults = gameResults;
+        this._stateManager.gameResults = gameResults;
         this._setGameState(EGameState.POST_GAME);
     }
 
     public resetGame(): void {
         this._setGameState(EGameState.PRE_GAME);
+        this._stateManager.resetGame();
     }
 }

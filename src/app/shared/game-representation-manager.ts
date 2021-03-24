@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ECastling, IMove } from '@app/shared/tile';
-import { IBoard } from '@app/shared/board-interface';
+import { IBoard } from '@app/shared/board/board-interface';
 
 @Injectable({
     providedIn: 'root'

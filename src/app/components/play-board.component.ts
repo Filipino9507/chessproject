@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
-import { Board } from '@app/shared/board';
-import { areCoordinatesInArray, BOARD_DIMEN } from '@app/shared/board-utility';
+import { Board } from '@app/shared/board/board';
+import { areCoordinatesInArray, BOARD_DIMEN } from '@app/shared/board/board-utility';
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
@@ -234,7 +234,6 @@ export class PlayBoardComponent implements OnInit {
                 this.endGameEventEmitter.emit({
                     winner: this._activePlayerColor,
                     reason: EGameResultReason.TIME_OUT,
-                    boardState: this.board,
                     gameSettings: this.gameSettings
                 });
             }
@@ -302,8 +301,12 @@ export class PlayBoardComponent implements OnInit {
         this.secondsLeft[this._activePlayerColor] += this.gameSettings.secondsIncrement;
         this._passActivePlayerColors();
         this._handleGameEnd();
+        this._updateState();
+    }
 
-				this._stateManager.moveList = this.board.playedMoves;
+    /** Updates storage on change in board state */
+    private _updateState(): void {
+        this._stateManager.moveList = this.board.playedMoves;
 				this._stateManager.activePlayerColor = this._activePlayerColor;
     }
 
@@ -346,7 +349,6 @@ export class PlayBoardComponent implements OnInit {
             this.endGameEventEmitter.emit({
                 winner,
                 reason,
-                boardState: this.board,
                 gameSettings: this.gameSettings,
             });
         }
@@ -358,7 +360,6 @@ export class PlayBoardComponent implements OnInit {
         this.endGameEventEmitter.emit({
             winner: this._activePlayerColor,
             reason: EGameResultReason.RESIGNATION,
-            boardState: this.board,
             gameSettings: this.gameSettings
         });
     }
@@ -368,7 +369,6 @@ export class PlayBoardComponent implements OnInit {
         this.endGameEventEmitter.emit({
             winner: null,
             reason: EGameResultReason.AGREEMENT,
-            boardState: this.board,
             gameSettings: this.gameSettings
         });
     }
@@ -380,6 +380,7 @@ export class PlayBoardComponent implements OnInit {
         this._selectedTilePossibilities = null;
         this.confirmationDialogMode = EConfirmationDialogMode.NONE;
         this._activePlayerColor = this.board.moveCount % 2;
+        this._updateState();
     }
 
     /** Loads game */
@@ -392,6 +393,7 @@ export class PlayBoardComponent implements OnInit {
             } else
                 alert('Failed loading game.')
             target.value = '';
+            this._updateState();
         });
     }
 

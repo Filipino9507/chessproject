@@ -1,4 +1,4 @@
-import { IBoard } from '@app/shared/board-interface';
+import { IBoard } from '@app/shared/board/board-interface';
 import { ICoordinates } from '@app/shared/tile';
 import { Piece } from '@app/shared/piece/piece';
 

@@ -1,7 +1,7 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { ITile, ICoordinates, IMove } from '@app/shared/tile';
-import { areCoordinatesValid } from '@app/shared/board-utility';
-import { IBoard } from '@app/shared/board-interface';
+import { areCoordinatesValid } from '@app/shared/board/board-utility';
+import { IBoard } from '@app/shared/board/board-interface';
 import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
 import { Knight } from '@app/shared/piece/knight';

@@ -1,5 +1,5 @@
-import { IBoard } from '@app/shared/board-interface';
-import { BOARD_DIMEN, addCoordinates, scaleCoordinates, areCoordinatesValid } from '@app/shared/board-utility';
+import { IBoard } from '@app/shared/board/board-interface';
+import { BOARD_DIMEN, addCoordinates, scaleCoordinates, areCoordinatesValid } from '@app/shared/board/board-utility';
 import { ITile, ICoordinates, IMove, ECastling } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 
