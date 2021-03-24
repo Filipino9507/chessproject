@@ -6,6 +6,7 @@ export interface IBoard {
     playedMoves: IMove[];
     getTile(coords: ICoordinates): ITile;
     accessibleByKing(coords: ICoordinates, kingColor: PieceColor): boolean;
+    isKingSafe(kingColor: PieceColor): boolean;
     isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean;
     copy(): IBoard;
     updateThreatMoves(): void;

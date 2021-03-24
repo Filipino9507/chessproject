@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IGameResults } from '@app/shared/game-results';
 import { IGameSettings } from '@app/shared/game-settings';
 import { EGameState } from '@app/shared/game-state';
+import { StateManager } from '@app/shared/state-manager';
 
 @Component({
     selector: 'app-play-menu',
@@ -45,23 +46,33 @@ export class PlayComponent implements OnInit {
     public gameSettings: IGameSettings;
     public gameResults: IGameResults;
 
-    public constructor() { }
+    public constructor(private _stateManager: StateManager) { }
 
     public ngOnInit(): void {
-        this.gameState = EGameState.PRE_GAME;
+        const storedGameState = this._stateManager.gameState;
+        const storedGameSettings = this._stateManager.gameSettings;
+        if(storedGameSettings)
+            this.gameSettings = storedGameSettings;
+        this.gameState = storedGameState ? storedGameState : EGameState.PRE_GAME;
+    }
+
+    private _setGameState(gameState: EGameState): void {
+      this.gameState = gameState;
+      this._stateManager.gameState = gameState;
     }
 
     public startGame(gameSettings: IGameSettings): void {
         this.gameSettings = gameSettings;
-        this.gameState = EGameState.IN_GAME;
+        this._stateManager.gameSettings = gameSettings;
+        this._setGameState(EGameState.IN_GAME);
     }
 
     public endGame(gameResults: IGameResults): void {
         this.gameResults = gameResults;
-        this.gameState = EGameState.POST_GAME;
+        this._setGameState(EGameState.POST_GAME);
     }
 
     public resetGame(): void {
-        this.gameState = EGameState.PRE_GAME;
+        this._setGameState(EGameState.PRE_GAME);
     }
 }

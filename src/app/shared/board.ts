@@ -1,10 +1,6 @@
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { ITile, ICoordinates, IMove } from '@app/shared/tile';
-import { 
-    generateBoardAfterMove, 
-    isKingSafeOnBoard,
-    areCoordinatesValid
-} from '@app/shared/board-utility';
+import { areCoordinatesValid } from '@app/shared/board-utility';
 import { IBoard } from '@app/shared/board-interface';
 import { Piece } from '@app/shared/piece/piece';
 import { Pawn } from '@app/shared/piece/pawn';
@@ -165,11 +161,31 @@ export class Board implements IBoard {
         return true;
     }
 
+    /** Checks if king is safe on this board */
+    public isKingSafe(kingColor: PieceColor): boolean {
+      let safeKing = true;
+      for (let rank = 0; rank < Board.BOARD_DIMEN; rank++) {
+          for(let file = 0; file < Board.BOARD_DIMEN; file++) {
+              const coords: ICoordinates = {rank, file};
+              const maybeKing = this.getTile(coords).piece;
+              if(maybeKing != null && maybeKing.checkable &&
+                  maybeKing.color === kingColor &&
+                  !this.accessibleByKing(coords, kingColor)) {
+                      safeKing = false;
+                  }      
+          }
+      }
+      return safeKing;
+  }
+
     /** Checks if king is safe after the said move */
     public isKingSafeAfterMove(fromCoords: ICoordinates, toCoords: ICoordinates): boolean {
         const color = this.getTile(fromCoords).piece.color;
-        const testBoard = generateBoardAfterMove(this, fromCoords, toCoords);
-        return isKingSafeOnBoard(testBoard, color);
+        const testBoard = this.copy();
+        const movingPiece = testBoard.getTile(fromCoords).piece;
+        movingPiece.move(testBoard, toCoords);
+        testBoard.updateThreatMoves();
+        return testBoard.isKingSafe(color);
     }
 
     /** Returns a deep copy of the board */

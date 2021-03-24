@@ -1,34 +1,6 @@
-import { IBoard } from '@app/shared/board-interface';
 import { ICoordinates } from '@app/shared/tile';
-import { PieceColor } from '@app/shared/piece/piece-color';
 
 export const BOARD_DIMEN = 8;
-
-/** Checks if king of a given color is safe on a given board */
-export function isKingSafeOnBoard(board: IBoard, kingColor: PieceColor): boolean{
-    let safeKing = true;
-    for (let rank = 0; rank < BOARD_DIMEN; rank++) {
-        for(let file = 0; file < BOARD_DIMEN; file++) {
-            const coords: ICoordinates = {rank, file};
-            const maybeKing = board.getTile(coords).piece;
-            if(maybeKing != null && maybeKing.checkable &&
-                maybeKing.color === kingColor &&
-                !board.accessibleByKing(coords, kingColor)) {
-                    safeKing = false;
-                }      
-        }
-    }
-    return safeKing;
-}
-
-/** Generates a copy of a board after the given move */
-export function generateBoardAfterMove(board: IBoard, fromCoords: ICoordinates, toCoords: ICoordinates): IBoard {
-    const alternativeBoard = board.copy();
-    const movingPiece = alternativeBoard.getTile(fromCoords).piece;
-    movingPiece.move(alternativeBoard, toCoords);
-    alternativeBoard.updateThreatMoves();
-    return alternativeBoard;
-}
 
 /** Check whether the given coordinates exist within the board */
 export function areCoordinatesValid(coords: ICoordinates): boolean {

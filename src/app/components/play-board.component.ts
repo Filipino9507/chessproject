@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
 import { Board } from '@app/shared/board';
-import { areCoordinatesInArray, BOARD_DIMEN, isKingSafeOnBoard } from '@app/shared/board-utility';
+import { areCoordinatesInArray, BOARD_DIMEN } from '@app/shared/board-utility';
 import { ITile, ICoordinates } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 import { IGameResults } from '@app/shared/game-results';
 import { EGameResultReason } from '@app/shared/game-result-reason';
 import { GameRepresentationManager } from '@app/shared/game-representation-manager';
+import { StateManager } from '@app/shared/state-manager';
 import { Piece } from '@app/shared/piece/piece';
 
 
@@ -199,13 +200,17 @@ export class PlayBoardComponent implements OnInit {
     @Output() public endGameEventEmitter = new EventEmitter<IGameResults>();
 
     /** Constructor */
-    public constructor(public gameRepresentationManager: GameRepresentationManager) { }
+    public constructor(
+      public gameRepresentationManager: GameRepresentationManager,
+      private _stateManager: StateManager
+    ) { }
 
     /** On init */
     public ngOnInit(): void {
         this._initializeFields();
         this.board = new Board();
         this._initializeTimer();
+				this._initializeStoredFields();
     }
 
     /** Initializes the object fields */
@@ -218,10 +223,11 @@ export class PlayBoardComponent implements OnInit {
 
     /** Initializes game timer, sets interval for seconds decrease and end condition */
     private _initializeTimer(): void {
-        this.secondsLeft = new Array(2);
+				this.secondsLeft = new Array(2);
         this.secondsLeft.fill(this.gameSettings.secondsToThink);
         const interval = setInterval(() => {
             --this.secondsLeft[this._activePlayerColor];
+						this._stateManager.secondsLeft = this.secondsLeft;
             if(this.secondsLeft[this._activePlayerColor] <= 0) {
                 clearInterval(interval);
                 this._passActivePlayerColors();
@@ -234,6 +240,20 @@ export class PlayBoardComponent implements OnInit {
             }
         }, 1000);
     }
+
+		/** Initializes the stored values, if there are any */
+		private _initializeStoredFields(): void {
+			const storedSecondsLeft = this._stateManager.secondsLeft;
+			const storedMoveList = this._stateManager.moveList;
+			const storedActivePlayerColor = this._stateManager.activePlayerColor;
+			
+			if(storedSecondsLeft)
+				this.secondsLeft = storedSecondsLeft;
+			if(storedMoveList)
+				this.board.loadGame(storedMoveList);
+			if(storedActivePlayerColor)
+				this._activePlayerColor = storedActivePlayerColor;
+		}
 
     /** Handles a tile being clicked */
     public clickTile(coords: ICoordinates): void {
@@ -282,6 +302,9 @@ export class PlayBoardComponent implements OnInit {
         this.secondsLeft[this._activePlayerColor] += this.gameSettings.secondsIncrement;
         this._passActivePlayerColors();
         this._handleGameEnd();
+
+				this._stateManager.moveList = this.board.playedMoves;
+				this._stateManager.activePlayerColor = this._activePlayerColor;
     }
 
     /** Changes active player color to the opposite */
@@ -316,7 +339,7 @@ export class PlayBoardComponent implements OnInit {
     private _handleGameEnd(): void {
         const allPossibleMoves = this.board.generateAllPossibleMoves(this._activePlayerColor);
         if(allPossibleMoves.length === 0) {
-            const isStalemate = isKingSafeOnBoard(this.board, this._activePlayerColor);
+            const isStalemate = this.board.isKingSafe(this._activePlayerColor);
             this._passActivePlayerColors();
             const winner = isStalemate ? null : this._activePlayerColor;
             const reason = isStalemate ? EGameResultReason.STALEMATE : EGameResultReason.CHECKMATE;
@@ -366,7 +389,8 @@ export class PlayBoardComponent implements OnInit {
             if(moveList && this.board.loadGame(moveList)) {
                 this._initializeFields();
                 this._activePlayerColor = moveList.length % 2;
-            }
+            } else
+                alert('Failed loading game.')
             target.value = '';
         });
     }
