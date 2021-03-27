@@ -1,6 +1,7 @@
 import { ICoordinates, ITile, IMove } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 
+/** Interface for board used in extern logic to avoid circular dependencies */
 export interface IBoard {
     moveCount: number;
     playedMoves: IMove[];

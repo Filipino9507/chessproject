@@ -21,20 +21,24 @@ enum EStateKey {
 })
 export class StateManager {
 
+  /** Sets a local storage variable */
   private _set(key: EStateKey, item: any): void {
     localStorage.setItem(key, JSON.stringify(item));
   }
 
+  /** Gets a local storage variable */
   private _get(key: EStateKey): any {
     return JSON.parse(localStorage.getItem(key));
   }
 
+  /** Resets variables in local storage for new game */
   public resetGame(): void {
     this._set(EStateKey.SECONDS_LEFT, null);
     this._set(EStateKey.MOVE_LIST, null);
     this._set(EStateKey.ACTIVE_PLAYER_COLOR, null);
   }
 
+  /** Variable setters */
   public set gameSettings(item: IGameSettings) { this._set(EStateKey.GAME_SETTINGS, item); }
   public set gameState(item: EGameState) { this._set(EStateKey.GAME_STATE, item); }
   public set gameResults(item: IGameResults) { this._set(EStateKey.GAME_RESULTS, item)}
@@ -42,6 +46,7 @@ export class StateManager {
   public set moveList(item: IMove[]) { this._set(EStateKey.MOVE_LIST, item); }
   public set activePlayerColor(item: PieceColor) { this._set(EStateKey.ACTIVE_PLAYER_COLOR, item); }
 
+  /** Variable getters */
   public get gameSettings(): IGameSettings { return this._get(EStateKey.GAME_SETTINGS) as IGameSettings; }
   public get gameState(): EGameState { return this._get(EStateKey.GAME_STATE) as EGameState; }
   public get gameResults(): IGameResults { return this._get(EStateKey.GAME_RESULTS) as IGameResults; }

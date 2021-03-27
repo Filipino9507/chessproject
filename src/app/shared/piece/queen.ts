@@ -8,12 +8,14 @@ export class Queen extends Piece {
     protected readonly _value = 9;
     protected readonly _checkable = false
 
+    /** Override */
     public copy(): Queen {
         return new Queen(this._color);
     }
 
+    /** Override */
     protected _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
-        return this.generateDistanceMoves(board, fromCoords, [
+        return this._generateDistanceMoves(board, fromCoords, [
             {file: 1, rank: 1}, 
             {file: 1, rank: -1},
             {file: -1, rank: 1}, 

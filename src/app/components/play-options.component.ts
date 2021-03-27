@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { IGameSettings } from '@app/shared/game-settings';
 
+/** Screen with options for player before game start */
 @Component({
     selector: 'app-play-options',
     template: `
@@ -63,6 +64,7 @@ export class PlayOptionsComponent implements OnInit {
     
     public constructor() { }
     
+    /** Init */
     public ngOnInit(): void {
         this.gameSettings = {
             secondsToThink: 300,
@@ -71,6 +73,7 @@ export class PlayOptionsComponent implements OnInit {
         };
     }
 
+    /** Submits game settings to be applied in game */
     public submitGameSettings(): void {
         this.startGameEventEmitter.emit(this.gameSettings);
     }

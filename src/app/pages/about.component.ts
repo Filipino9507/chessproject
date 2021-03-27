@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+/** Page, which shows about info */
 @Component({
     selector: 'app-about',
     template: `

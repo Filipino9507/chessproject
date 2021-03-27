@@ -5,23 +5,34 @@ import { PieceColor } from '@app/shared/piece/piece-color';
 
 export abstract class Piece {
     
+    /** Color of the piece */
     protected _color: PieceColor;
+
+    /** Tile which the piece  */
     protected _tile: ITile;
+
+    /** Stores if the piece has moved */
     protected _hasMoved: boolean;
 
+    /** Stores symbols for the piece */
     protected readonly _symbols: string[];
-    protected readonly _value: number;
+
+    /** Stores if the piece can be checked */
     protected readonly _checkable: boolean;
 
+    /** Constructor */
     public constructor(color: PieceColor) {
         this._color = color;
         this._hasMoved = false;
     }
 
+    /** Abstract copy method */
     public abstract copy(): Piece;
 
+    /** Abstract method which generates all moves, even those that put the king in danger */
     protected abstract _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[];
 
+    /** Class that generates moves and determines which are actually possible with regards to king safety and other pieces */
     public generatePossibleMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateMoves(board, fromCoords).filter((toCoords) => {
             const piece = board.getTile(toCoords).piece;
@@ -30,16 +41,19 @@ export abstract class Piece {
         });
     }
 
+    /** Generates moves that threaten squares (the same as generate moves by default) */
     public generateThreatMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateMoves(board, fromCoords);
     }       
 
+    /** Updates bpard threats by this piece */
     public updateBoardThreats(board: IBoard, fromCoords: ICoordinates): void {
         for(let coords of this.generateThreatMoves(board, fromCoords))
             board.getTile(coords).threatenedBy.add(this);
     }
 
-    protected generateDistanceMoves(
+    /** Utility method to generate distance moves (for queen, bishop and rook) */
+    protected _generateDistanceMoves(
         board: IBoard, 
         fromCoords: ICoordinates, 
         directions: ICoordinates[]
@@ -62,6 +76,7 @@ export abstract class Piece {
         return moves;
     }
 
+    /** General move method, which takes a board and moves this piece */
     public move(board: IBoard, toCoords: ICoordinates): IMove {
         const fromTile = this._tile;
         const toTile = board.getTile(toCoords);
@@ -79,6 +94,8 @@ export abstract class Piece {
         };
     }
 
+    /** GETTERS AND SETTERS */
+    
     public get color(): PieceColor {
         return this._color;
     }
@@ -97,10 +114,6 @@ export abstract class Piece {
 
     public get symbol(): string {
         return this._symbols[this._color];
-    }
-
-    public get value(): number {
-        return this._value;
     }
 
     public get checkable(): boolean {

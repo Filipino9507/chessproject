@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+/** Page which is shown on a non-existing route */
 @Component({
   selector: 'app-page-not-found',
   template: `

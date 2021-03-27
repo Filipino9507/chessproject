@@ -12,10 +12,12 @@ export class Pawn extends Piece {
     protected readonly _checkable = false
     protected _firstRowMoveNumber = 0;
 
+    /** Override */
     public copy(): Pawn {
         return new Pawn(this._color);
     }
 
+    /** Generate regular moves for pawn */
     private _generateNormalMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         const toCoords = addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
@@ -25,6 +27,7 @@ export class Pawn extends Piece {
         return moves;
     }
 
+    /** Generate special first row moves for pawn */
     private _generateFirstRowMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         const betweenCoords = addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
@@ -38,6 +41,7 @@ export class Pawn extends Piece {
         return moves;
     }
 
+    /** Generate special capture moves for pawn */
     private _generateCaptureMoves(board: IBoard, fromCoords: ICoordinates, canGoToEmpty: boolean): ICoordinates[] {
         let moves: ICoordinates[] = [];
         for(let toCoords of [
@@ -54,6 +58,7 @@ export class Pawn extends Piece {
         return moves;
     }
 
+    /** Generate special en passant moves for pawn */
     private _generateEnPassantMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         if(fromCoords.rank === 3 + this._color) {
@@ -71,10 +76,12 @@ export class Pawn extends Piece {
         return moves;
     }
 
+    /** Override */
     public generateThreatMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateCaptureMoves(board, fromCoords, true);
     }
-
+    
+    /** Override */
     protected _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateNormalMoves(board, fromCoords)
             .concat(this._generateFirstRowMoves(board, fromCoords)
@@ -82,10 +89,12 @@ export class Pawn extends Piece {
             .concat(this._generateEnPassantMoves(board, fromCoords))));
     }
 
+    /** Returns movement direction according to the color of this pawn */
     public movementDirection(): 1 | -1 {
         return this._color === PieceColor.WHITE ? -1 : 1;
     }
 
+    /** Override */
     public move(board: IBoard, toCoords: ICoordinates): IMove {
         this._markFirstRowMove(board, toCoords);
         this._attemptEnPassant(board, toCoords);
@@ -94,11 +103,13 @@ export class Pawn extends Piece {
         return mv;
     }
 
+    /** Saves the data about the first move for en passant purposes */
     private _markFirstRowMove(board: IBoard, toCoords: ICoordinates): void {
         if(Math.abs(this._tile.coords.rank - toCoords.rank) === 2)
             this.firstRowMoveNumber = board.moveCount;
     }
 
+    /** Attempts en passant */
     private _attemptEnPassant(board: IBoard, toCoords: ICoordinates): void {
         const fromCoords = this._tile.coords;
         const isCapture = board.getTile(toCoords).piece != null;
@@ -110,6 +121,7 @@ export class Pawn extends Piece {
         }    
     }
 
+    /** Attempts promotion */
     private _attemptPromotion(coords: ICoordinates): void {
         const lastRank = this._color === PieceColor.WHITE ? 0 : 7;
         if(coords.rank === lastRank) {
@@ -117,6 +129,8 @@ export class Pawn extends Piece {
             this._tile.piece.tile = this._tile;
         }
     }
+
+    /** GETTERS AND SETTERS */
 
     public get firstRowMoveNumber(): number {
         return this._firstRowMoveNumber;

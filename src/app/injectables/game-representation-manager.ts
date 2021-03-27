@@ -7,6 +7,7 @@ import { IBoard } from '@app/shared/board/board-interface';
 })
 export class GameRepresentationManager {
 
+    /** Reads file and returns a callback which runs when the file content is loaded*/
     public readFile(target: HTMLInputElement, onLoadCallback: (result: any) => void): void {
         const file = target.files[0];
         if(!file)
@@ -16,6 +17,7 @@ export class GameRepresentationManager {
         reader.readAsText(file);    
     }
 
+    /** Writes to file */
     public writeFile(data: string, filename: string): void {
         const file = new Blob([data]);
         if(window.navigator.msSaveOrOpenBlob) {
@@ -34,6 +36,7 @@ export class GameRepresentationManager {
         }
     }
 
+    /** Converts a list of moves into a representation that gets then saved */
     public toRepresentation(moveList: IMove[]): string {
         let representation = '';
         const len = moveList.length;
@@ -48,6 +51,7 @@ export class GameRepresentationManager {
         return representation;
     }
 
+    /** Converts the saved game representation back into a list of moves */
     public toMoveList(representation: string): IMove[] {
         if(representation.length === 0)
             return [];
@@ -65,6 +69,7 @@ export class GameRepresentationManager {
         return moveList;
     }
 
+    /** Gets the human readable representation of one move */
     private _getMoveHumanRepr(move: IMove): string {
         switch(move.castling) {
             case ECastling.NONE:
@@ -79,6 +84,7 @@ export class GameRepresentationManager {
         }
     }
 
+    /** Gets the human readable representation of moves played in a board */
     public toHumanRepresentation(board: IBoard): string {
         const playedMoves = board.playedMoves;
         const len = playedMoves.length;

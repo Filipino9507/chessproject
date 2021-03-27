@@ -9,10 +9,12 @@ export class Knight extends Piece {
     protected readonly _value = 3;
     protected readonly _checkable = false
 
+    /** Override */
     public copy(): Knight {
         return new Knight(this._color);
     }
 
+    /** Override */
     protected _generateMoves(_: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
 

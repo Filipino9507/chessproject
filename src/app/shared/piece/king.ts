@@ -10,10 +10,12 @@ export class King extends Piece {
     protected readonly _value = 0;
     protected readonly _checkable = true;
 
+    /** Override */
     public copy(): King {
         return new King(this._color);
     }
 
+    /** Generates normal moves for the king */
     private _generateKingMoves(fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
         for(let dRank = -1; dRank <= 1; dRank++) {
@@ -28,6 +30,7 @@ export class King extends Piece {
         return moves;
     }
 
+    /** Generates special castling moves for the king */
     private _generateCastlingMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         if(this._hasMoved) 
             return []; 
@@ -58,15 +61,18 @@ export class King extends Piece {
         return moves;
     }
 
+    /** Override */
     protected _generateMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateKingMoves(fromCoords)
             .concat(this._generateCastlingMoves(board, fromCoords));
     }
 
+    /** Override */
     public generateThreatMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         return this._generateKingMoves(fromCoords);
     }
 
+    /** Override */
     public move(board: IBoard, toCoords: ICoordinates): IMove {
         const castling = this._attemptCastling(board, toCoords);
         const mv = super.move(board, toCoords);
@@ -74,6 +80,7 @@ export class King extends Piece {
         return mv;
     }
 
+    /** Attempts castling, making all of the necessary moves */
     private _attemptCastling(board: IBoard, toCoords: ICoordinates): ECastling {
         const fromCoords = this._tile.coords;
         const dFile = toCoords.file - fromCoords.file;

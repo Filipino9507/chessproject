@@ -4,6 +4,7 @@ import { IGameSettings } from '@app/shared/game-settings';
 import { EGameState } from '@app/shared/game-state';
 import { StateManager } from '@app/injectables/state-manager';
 
+/** Page which shows either play options, play board, or play end game component */
 @Component({
     selector: 'app-play-menu',
     template: `
@@ -48,6 +49,7 @@ export class PlayComponent implements OnInit {
 
     public constructor(private _stateManager: StateManager) { }
 
+    /** On init */
     public ngOnInit(): void {
         const storedGameState = this._stateManager.gameState;
         const storedGameSettings = this._stateManager.gameSettings;
@@ -59,23 +61,27 @@ export class PlayComponent implements OnInit {
         this.gameState = storedGameState ? storedGameState : EGameState.PRE_GAME;
     }
 
+    /** Sets the state of the game and its stored variable */
     private _setGameState(gameState: EGameState): void {
       this.gameState = gameState;
       this._stateManager.gameState = gameState;
     }
 
+    /** Starts the game (from selection screen) */
     public startGame(gameSettings: IGameSettings): void {
         this.gameSettings = gameSettings;
         this._stateManager.gameSettings = gameSettings;
         this._setGameState(EGameState.IN_GAME);
     }
 
+    /** Ends the game (from game screen) */
     public endGame(gameResults: IGameResults): void {
         this.gameResults = gameResults;
         this._stateManager.gameResults = gameResults;
         this._setGameState(EGameState.POST_GAME);
     }
 
+    /** Resets game (from ending screen) */
     public resetGame(): void {
         this._setGameState(EGameState.PRE_GAME);
         this._stateManager.resetGame();
