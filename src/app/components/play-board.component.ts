@@ -33,7 +33,7 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
                                         evenRank === evenFile ? 'white-tile' : 'black-tile',
                                         board.tileArray[rank][file].highlighted ? 'highlighted-tile' : ''
                                     ]"
-                                    (click)="clickTile({rank: rank, file: file})">
+                                    (click)="clickTile({ rank: rank, file: file })">
                                     {{ board.tileArray[rank][file].piece != null ? board.tileArray[rank][file].piece.symbol : '‎' }} 
                                 </button>
                             </div>
@@ -152,6 +152,8 @@ enum EConfirmationDialogMode { NONE, RESIGN, DRAW, TAKEBACK }
         `button.tile {
             min-width: 75px;
             min-height: 75px;
+            max-width: 75px;
+            max-height: 75px;
             border: 1px solid black;
             padding: 0px;
             font-size: 70px;
