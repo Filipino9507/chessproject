@@ -23,12 +23,12 @@ export class StateManager {
 
   /** Sets a local storage variable */
   private _set(key: EStateKey, item: any): void {
-    localStorage.setItem(key, JSON.stringify(item));
+    sessionStorage.setItem(key, JSON.stringify(item));
   }
 
   /** Gets a local storage variable */
   private _get(key: EStateKey): any {
-    return JSON.parse(localStorage.getItem(key));
+    return JSON.parse(sessionStorage.getItem(key));
   }
 
   /** Resets variables in local storage for new game */

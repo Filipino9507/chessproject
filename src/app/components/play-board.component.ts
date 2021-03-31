@@ -182,6 +182,7 @@ export class PlayBoardComponent implements OnInit {
 
     /** How many seconds are left for each side */
     public secondsLeft: PieceColor[];
+    private _secondsLeftInterval: ReturnType<typeof setInterval>;
 
     /** Which player is active */
     private _activePlayerColor: PieceColor;
@@ -227,13 +228,13 @@ export class PlayBoardComponent implements OnInit {
     private _initializeTimer(): void {
 				this.secondsLeft = new Array(2);
         this.secondsLeft.fill(this.gameSettings.secondsToThink);
-        const interval = setInterval(() => {
+        
+        this._secondsLeftInterval = setInterval(() => {
             --this.secondsLeft[this._activePlayerColor];
 						this._stateManager.secondsLeft = this.secondsLeft;
             if(this.secondsLeft[this._activePlayerColor] <= 0) {
-                clearInterval(interval);
                 this._passActivePlayerColors();
-                this.endGameEventEmitter.emit({
+                this._endGame({
                     winner: this._activePlayerColor,
                     reason: EGameResultReason.TIME_OUT,
                     gameSettings: this.gameSettings
@@ -348,7 +349,7 @@ export class PlayBoardComponent implements OnInit {
             this._passActivePlayerColors();
             const winner = isStalemate ? null : this._activePlayerColor;
             const reason = isStalemate ? EGameResultReason.STALEMATE : EGameResultReason.CHECKMATE;
-            this.endGameEventEmitter.emit({
+            this._endGame({
                 winner,
                 reason,
                 gameSettings: this.gameSettings,
@@ -356,10 +357,16 @@ export class PlayBoardComponent implements OnInit {
         }
     }
 
+    /** Ends game, clears interval, etc. */
+    private _endGame(gameResults: IGameResults): void {
+        clearInterval(this._secondsLeftInterval);
+        this.endGameEventEmitter.emit(gameResults);
+    }
+
     /** Triggers resignation */
     public resignGame(): void {
         this._passActivePlayerColors();
-        this.endGameEventEmitter.emit({
+        this._endGame({
             winner: this._activePlayerColor,
             reason: EGameResultReason.RESIGNATION,
             gameSettings: this.gameSettings
@@ -368,7 +375,7 @@ export class PlayBoardComponent implements OnInit {
 
     /** Triggers draw */
     public drawGame(): void {
-        this.endGameEventEmitter.emit({
+        this._endGame({
             winner: null,
             reason: EGameResultReason.AGREEMENT,
             gameSettings: this.gameSettings
@@ -388,6 +395,7 @@ export class PlayBoardComponent implements OnInit {
     /** Loads game */
     public loadGame(target: HTMLInputElement): void {
         this.gameRepresentationManager.readFile(target, (result: any) => {
+            // const moveList = this.gameRepresentationManager.fromHumanRepresentation(result);
             const moveList = this.gameRepresentationManager.toMoveList(result);
             if(moveList && this.board.loadGame(moveList)) {
                 this._initializeFields();
@@ -401,6 +409,7 @@ export class PlayBoardComponent implements OnInit {
 
     /** Saves game */
     public saveGame(): void {
+        // const representation = this.gameRepresentationManager.toHumanRepresentation(this.board);
         const representation = this.gameRepresentationManager.toRepresentation(this.board.playedMoves);
         this.gameRepresentationManager.writeFile(representation, 'game.txt');
     }

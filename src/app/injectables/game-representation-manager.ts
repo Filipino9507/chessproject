@@ -70,7 +70,7 @@ export class GameRepresentationManager {
     }
 
     /** Gets the human readable representation of one move */
-    private _getMoveHumanRepr(move: IMove): string {
+    private _toHumanRepresentationOneMove(move: IMove): string {
         switch(move.castling) {
             case ECastling.NONE:
                 const fileRepr = String.fromCharCode(move.toCoords.file + 97);
@@ -92,9 +92,38 @@ export class GameRepresentationManager {
         for(let i = 0; i < len; i++) {
             if(i % 2 === 0) 
                 repr += (i / 2 + 1).toString() + '. ';
-            repr += this._getMoveHumanRepr(playedMoves[i]);
+            repr += this._toHumanRepresentationOneMove(playedMoves[i]);
             repr += i % 2 === 0 ? '\t\t' : '\n';
         }
         return repr;
     }
-}
+
+    /// ???????
+    /// THINK OVER HOW TO SAVE REPRESENTATION
+
+    /** Converts the human representation of one move to the move object */
+    private _fromHumanRepresentationOneMove(representation: string): IMove {
+      return 
+    }
+
+    /** Converts the human representation to a list of moves */
+    public fromHumanRepresentation(representation: string): IMove[] {
+      representation = representation.replace('\n', '');
+      const splitRepresentation = representation.split(/\d\. /).slice(1);
+      console.log(splitRepresentation);
+
+      let playedMoves = [];
+      for(const pairRepr of splitRepresentation) {
+        const twoReprs = pairRepr.split('\t\t');
+        for(const moveRepr of twoReprs) {
+          if(moveRepr.length !== 0) {
+            playedMoves.push(
+              this._fromHumanRepresentationOneMove(moveRepr)
+            );
+          }
+        }
+      }
+
+      return playedMoves;
+    }
+  }
