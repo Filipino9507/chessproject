@@ -82,36 +82,10 @@ export abstract class Piece {
         return moves;
     }
 
-    /** General move method, which takes a board and moves this piece */
-    public move(
-        board: IBoard,
-        toCoords: ICoordinates,
-        generateInfoObject: boolean
-    ): IMove {
-        if(!generateInfoObject) {
-            const fromTile = this._tile;
-            const toTile = board.getTile(toCoords);
-            const capture = toTile.piece != null;
-            toTile.piece = fromTile.piece;
-            fromTile.piece = null;
-            this._tile = toTile;
-            this._hasMoved = true;
-
-            return {
-                fromCoords: fromTile.coords,
-                toCoords,
-                pieceSymbol: this.symbol,
-                capture,
-                castling: ECastling.NONE,
-                specifyRank: null,
-                specifyFile: null
-            };
-        }
-
-        console.log('BEGIN\n\n\n', this.symbol)
-
-        let numberOfOtherPieces = 0;
+    /** Gets specified position and makes it a part of the move object */
+    private _getSpecifiedPosition(board: IBoard, toCoords: ICoordinates): [number, number] {
         let specifyRank = null, specifyFile = null;
+        let numberOfOtherPieces = 0;
         const myCoords = this._tile.coords;
         for(const rank of board.tileArray) {
             for(const tile of rank) {                
@@ -123,17 +97,8 @@ export abstract class Piece {
                     const otherPieceCoords = otherPiece.tile.coords;
                     const otherPieceMoves = otherPiece._generateMoves(board, otherPieceCoords);
                     
-                    console.log(
-                        'OTHER PIECE',
-                        otherPiece.symbol,
-                        otherPieceMoves.length,
-                        otherPieceMoves
-                        // otherPiece.tile.coords
-                    );
-                    
                     for(const move of otherPieceMoves) {
                         if(areCoordinatesEqual(move, toCoords)) {
-                            console.log('CAN GO HERE POG');
                             if(myCoords.rank !== otherPieceCoords.rank)
                                 specifyRank = myCoords.rank;
                             if(myCoords.file !== otherPieceCoords.file)
@@ -144,11 +109,21 @@ export abstract class Piece {
                 }
             }
         }
-
         if(numberOfOtherPieces === 1 && specifyFile) {
             specifyRank = null;
         }
+        return [specifyRank, specifyFile];
+    }
 
+    /** General move method, which takes a board and moves this piece */
+    public move(
+        board: IBoard,
+        toCoords: ICoordinates,
+        specifyPosition: boolean
+    ): IMove {
+        const [specifyRank, specifyFile] = specifyPosition
+            ? this._getSpecifiedPosition(board, toCoords)
+            : [null, null];
         const fromTile = this._tile;
         const toTile = board.getTile(toCoords);
         const capture = toTile.piece != null;
@@ -156,9 +131,6 @@ export abstract class Piece {
         fromTile.piece = null;
         this._tile = toTile;
         this._hasMoved = true;
-        
-        console.log('SPECIFY RANK: ', specifyRank);
-        console.log('SPECIFY FILE: ', specifyFile);
 
         return {
             fromCoords: fromTile.coords,

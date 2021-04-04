@@ -98,10 +98,10 @@ export class Pawn extends Piece {
     }
 
     /** Override */
-    public move(board: IBoard, toCoords: ICoordinates, generateInfoObject: boolean): IMove {
+    public move(board: IBoard, toCoords: ICoordinates, specifyPosition: boolean): IMove {
         this._markFirstRowMove(board, toCoords);
         const enPassant = this._attemptEnPassant(board, toCoords);
-        const mv = super.move(board, toCoords, generateInfoObject);
+        const mv = super.move(board, toCoords, specifyPosition);
         if(enPassant) {
             mv.capture = true;
         }

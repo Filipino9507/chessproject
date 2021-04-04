@@ -115,28 +115,29 @@ export class GameRepresentationManager {
 
     /** Converts the human representation of one move to the move object */
     private _fromHumanRepresentationOneMove(representation: string): IMove {
-      return 
+        return 
     }
 
     /** Converts the human representation to a list of moves */
     public fromHumanRepresentation(representation: string): IMove[] {
-      representation = representation.replace('\n', '');
-      const splitRepresentation = representation.split(/\d\. /).slice(1);
-      console.log(splitRepresentation);
+        representation = representation.replace('\n', '');
+        const splitRepresentation = representation.split(/\d\. /).slice(1);
+        console.log(splitRepresentation);
 
-      let playedMoves = [];
-      for(const pairRepr of splitRepresentation) {
-        const twoReprs = pairRepr.split('\t\t');
-        for(const moveRepr of twoReprs) {
-          if(moveRepr.length !== 0) {
-            playedMoves.push(
-              this._fromHumanRepresentationOneMove(moveRepr)
-            );
-          }
+        let playedMoves = [];
+        for(const pairRepr of splitRepresentation) {
+            const twoReprs = pairRepr.split('\t\t');
+            for(const moveRepr of twoReprs) {
+                if(moveRepr.length !== 0) {
+                    // playedMoves.push(
+                    //     this._fromHumanRepresentationOneMove(moveRepr)
+                    // );
+                    console.log(moveRepr);
+                }
+            }
         }
-      }
 
-      return playedMoves;
+        return playedMoves;
     }
 
     /** Converts human rank to computer rank */

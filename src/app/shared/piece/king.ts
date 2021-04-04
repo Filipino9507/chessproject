@@ -73,9 +73,9 @@ export class King extends Piece {
     }
 
     /** Override */
-    public move(board: IBoard, toCoords: ICoordinates, generateInfoObject: boolean): IMove {
+    public move(board: IBoard, toCoords: ICoordinates, specifyPosition: boolean): IMove {
         const castling = this._attemptCastling(board, toCoords);
-        const mv = super.move(board, toCoords, generateInfoObject);
+        const mv = super.move(board, toCoords, specifyPosition);
         mv.castling = castling;
         return mv;
     }
