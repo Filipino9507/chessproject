@@ -20,7 +20,9 @@ export interface IMove {
     toCoords: ICoordinates;
     pieceSymbol: string;
     capture: boolean;
-    castling: ECastling
+    castling: ECastling;
+    specifyRank: number;
+    specifyFile: number;
 }
 
 /** Enum for types of castling */

@@ -1,5 +1,11 @@
 import { IBoard } from '@app/shared/board/board-interface';
-import { BOARD_DIMEN, addCoordinates, scaleCoordinates, areCoordinatesValid } from '@app/shared/board/board-utility';
+import {
+    BOARD_DIMEN,
+    addCoordinates,
+    scaleCoordinates,
+    areCoordinatesValid,
+    areCoordinatesEqual
+} from '@app/shared/board/board-utility';
 import { ITile, ICoordinates, IMove, ECastling } from '@app/shared/tile';
 import { PieceColor } from '@app/shared/piece/piece-color';
 
@@ -77,7 +83,72 @@ export abstract class Piece {
     }
 
     /** General move method, which takes a board and moves this piece */
-    public move(board: IBoard, toCoords: ICoordinates): IMove {
+    public move(
+        board: IBoard,
+        toCoords: ICoordinates,
+        generateInfoObject: boolean
+    ): IMove {
+        if(!generateInfoObject) {
+            const fromTile = this._tile;
+            const toTile = board.getTile(toCoords);
+            const capture = toTile.piece != null;
+            toTile.piece = fromTile.piece;
+            fromTile.piece = null;
+            this._tile = toTile;
+            this._hasMoved = true;
+
+            return {
+                fromCoords: fromTile.coords,
+                toCoords,
+                pieceSymbol: this.symbol,
+                capture,
+                castling: ECastling.NONE,
+                specifyRank: null,
+                specifyFile: null
+            };
+        }
+
+        console.log('BEGIN\n\n\n', this.symbol)
+
+        let numberOfOtherPieces = 0;
+        let specifyRank = null, specifyFile = null;
+        const myCoords = this._tile.coords;
+        for(const rank of board.tileArray) {
+            for(const tile of rank) {                
+                const otherPiece = tile.piece;
+                if(otherPiece && otherPiece.symbol === this.symbol 
+                    && otherPiece != this) {
+                    
+                    ++numberOfOtherPieces;
+                    const otherPieceCoords = otherPiece.tile.coords;
+                    const otherPieceMoves = otherPiece._generateMoves(board, otherPieceCoords);
+                    
+                    console.log(
+                        'OTHER PIECE',
+                        otherPiece.symbol,
+                        otherPieceMoves.length,
+                        otherPieceMoves
+                        // otherPiece.tile.coords
+                    );
+                    
+                    for(const move of otherPieceMoves) {
+                        if(areCoordinatesEqual(move, toCoords)) {
+                            console.log('CAN GO HERE POG');
+                            if(myCoords.rank !== otherPieceCoords.rank)
+                                specifyRank = myCoords.rank;
+                            if(myCoords.file !== otherPieceCoords.file)
+                                specifyFile = myCoords.file;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(numberOfOtherPieces === 1 && specifyFile) {
+            specifyRank = null;
+        }
+
         const fromTile = this._tile;
         const toTile = board.getTile(toCoords);
         const capture = toTile.piece != null;
@@ -85,12 +156,18 @@ export abstract class Piece {
         fromTile.piece = null;
         this._tile = toTile;
         this._hasMoved = true;
+        
+        console.log('SPECIFY RANK: ', specifyRank);
+        console.log('SPECIFY FILE: ', specifyFile);
+
         return {
             fromCoords: fromTile.coords,
             toCoords,
             pieceSymbol: this.symbol,
             capture,
-            castling: ECastling.NONE
+            castling: ECastling.NONE,
+            specifyRank,
+            specifyFile
         };
     }
 
@@ -102,6 +179,10 @@ export abstract class Piece {
 
     public get hasMoved(): boolean {
         return this._hasMoved;
+    }
+
+    public get tile(): ITile {
+      return this._tile;
     }
 
     public set hasMoved(value: boolean) {

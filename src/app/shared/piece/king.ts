@@ -73,9 +73,9 @@ export class King extends Piece {
     }
 
     /** Override */
-    public move(board: IBoard, toCoords: ICoordinates): IMove {
+    public move(board: IBoard, toCoords: ICoordinates, generateInfoObject: boolean): IMove {
         const castling = this._attemptCastling(board, toCoords);
-        const mv = super.move(board, toCoords);
+        const mv = super.move(board, toCoords, generateInfoObject);
         mv.castling = castling;
         return mv;
     }
@@ -87,11 +87,11 @@ export class King extends Piece {
         if(Math.abs(dFile) === 2) {
             if(dFile > 0) {
                 const rook = board.getTile(addCoordinates(fromCoords, {rank: 0, file: 3})).piece;
-                rook.move(board, addCoordinates(fromCoords, {rank: 0, file: 1}));
+                rook.move(board, addCoordinates(fromCoords, {rank: 0, file: 1}), false);
                 return ECastling.KING_SIDE;
             } else {
                 const rook = board.getTile(addCoordinates(fromCoords, {rank: 0, file: -4})).piece;
-                rook.move(board, addCoordinates(fromCoords, {rank: 0, file: -1}));
+                rook.move(board, addCoordinates(fromCoords, {rank: 0, file: -1}), false);
                 return ECastling.QUEEN_SIDE;
             }
         }

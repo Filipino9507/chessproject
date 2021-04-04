@@ -5,6 +5,7 @@ import { PieceColor } from '@app/shared/piece/piece-color';
 export interface IBoard {
     moveCount: number;
     playedMoves: IMove[];
+    tileArray: ITile[][];
     getTile(coords: ICoordinates): ITile;
     accessibleByKing(coords: ICoordinates, kingColor: PieceColor): boolean;
     isKingSafe(kingColor: PieceColor): boolean;

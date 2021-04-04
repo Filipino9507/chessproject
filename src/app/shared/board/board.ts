@@ -87,7 +87,7 @@ export class Board implements IBoard {
             const piece = this.getTile(fromCoords).piece;
             if(piece == null)
                 return false;
-            const mv = piece.move(this, toCoords);
+            const mv = piece.move(this, toCoords, true);
             this._playedMoves.push(mv);
             this._moveCount++;
         }
@@ -183,7 +183,7 @@ export class Board implements IBoard {
         const color = this.getTile(fromCoords).piece.color;
         const testBoard = this.copy();
         const movingPiece = testBoard.getTile(fromCoords).piece;
-        movingPiece.move(testBoard, toCoords);
+        movingPiece.move(testBoard, toCoords, false);
         testBoard.updateThreatMoves();
         return testBoard.isKingSafe(color);
     }

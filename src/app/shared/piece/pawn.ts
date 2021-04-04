@@ -30,9 +30,9 @@ export class Pawn extends Piece {
     /** Generate special first row moves for pawn */
     private _generateFirstRowMoves(board: IBoard, fromCoords: ICoordinates): ICoordinates[] {
         let moves: ICoordinates[] = [];
-        const betweenCoords = addCoordinates(fromCoords, {file: 0, rank: this.movementDirection()});
+        const betweenCoords = addCoordinates(fromCoords, { file: 0, rank: this.movementDirection() });
         const toCoords = addCoordinates(
-            fromCoords, {file: 0, rank: 2 * this.movementDirection()}
+            fromCoords, { file: 0, rank: 2 * this.movementDirection() }
         );
         if(areCoordinatesValid(toCoords) && 
         board.getTile(betweenCoords).piece == null && board.getTile(toCoords).piece == null &&
@@ -45,8 +45,8 @@ export class Pawn extends Piece {
     private _generateCaptureMoves(board: IBoard, fromCoords: ICoordinates, canGoToEmpty: boolean): ICoordinates[] {
         let moves: ICoordinates[] = [];
         for(let toCoords of [
-            addCoordinates(fromCoords, {file: 1, rank: this.movementDirection()}),
-            addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
+            addCoordinates(fromCoords, { file: 1, rank: this.movementDirection() }),
+            addCoordinates(fromCoords, { file: -1, rank: this.movementDirection() })
         ]) {
             if(areCoordinatesValid(toCoords)) {
                 const piece = board.getTile(toCoords).piece;
@@ -63,14 +63,17 @@ export class Pawn extends Piece {
         let moves: ICoordinates[] = [];
         if(fromCoords.rank === 3 + this._color) {
             for(let toCoords of [
-                addCoordinates(fromCoords, {file: 1, rank: this.movementDirection()}),
-                addCoordinates(fromCoords, {file: -1, rank: this.movementDirection()})
+                addCoordinates(fromCoords, { file: 1, rank: this.movementDirection() }),
+                addCoordinates(fromCoords, { file: -1, rank: this.movementDirection() })
             ]) {
-                const maybePawn = board.getTile({rank: fromCoords.rank, file: toCoords.file}).piece;
-                if(maybePawn != null && 
-                    maybePawn instanceof Pawn && 
-                    maybePawn.firstRowMoveNumber + 1 === board.moveCount)
-                    moves.push(toCoords);
+                const tile = board.getTile({ rank: fromCoords.rank, file: toCoords.file });
+                if(tile) {
+                    const maybePawn = tile.piece;
+                    if(maybePawn && maybePawn instanceof Pawn && 
+                        maybePawn.firstRowMoveNumber + 1 === board.moveCount) {
+                        moves.push(toCoords);
+                    }    
+                }  
             }
         }
         return moves;
@@ -95,10 +98,13 @@ export class Pawn extends Piece {
     }
 
     /** Override */
-    public move(board: IBoard, toCoords: ICoordinates): IMove {
+    public move(board: IBoard, toCoords: ICoordinates, generateInfoObject: boolean): IMove {
         this._markFirstRowMove(board, toCoords);
-        this._attemptEnPassant(board, toCoords);
-        const mv = super.move(board, toCoords);
+        const enPassant = this._attemptEnPassant(board, toCoords);
+        const mv = super.move(board, toCoords, generateInfoObject);
+        if(enPassant) {
+            mv.capture = true;
+        }
         this._attemptPromotion(toCoords);
         return mv;
     }
@@ -110,15 +116,19 @@ export class Pawn extends Piece {
     }
 
     /** Attempts en passant */
-    private _attemptEnPassant(board: IBoard, toCoords: ICoordinates): void {
+    private _attemptEnPassant(board: IBoard, toCoords: ICoordinates): boolean {
         const fromCoords = this._tile.coords;
         const isCapture = board.getTile(toCoords).piece != null;
         if(!isCapture) {
             const dRank = fromCoords.rank - toCoords.rank;
             const dFile = fromCoords.file - toCoords.file;
-            if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1)
+            if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1) {
                 board.getTile(addCoordinates(toCoords, {rank: dRank, file: 0})).piece = null;
-        }    
+                return true;
+            }
+                
+        }
+        return false;   
     }
 
     /** Attempts promotion */

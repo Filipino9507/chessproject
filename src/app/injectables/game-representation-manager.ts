@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ECastling, IMove } from '@app/shared/tile';
 import { IBoard } from '@app/shared/board/board-interface';
+import { areCoordinatesEqual } from '@app/shared/board/board-utility';
 
 @Injectable({
     providedIn: 'root'
@@ -70,15 +71,26 @@ export class GameRepresentationManager {
     }
 
     /** Gets the human readable representation of one move */
-    private _toHumanRepresentationOneMove(move: IMove): string {
+    private _toHumanRepresentationOneMove(board: IBoard, move: IMove): string {
         switch(move.castling) {
             case ECastling.NONE:
-                const fileRepr = String.fromCharCode(move.toCoords.file + 97);
-                const rankRepr = 8 - move.toCoords.rank;
+                let specifyRepr = '';
+                if(move.specifyFile) {
+                    specifyRepr += this._fileToHuman(move.specifyFile);
+                }
+                if(move.specifyRank) {
+                    specifyRepr += this._rankToHuman(move.specifyRank);
+                }
                 const captureRepr = move.capture ? 'x' : '';
-                return move.pieceSymbol + captureRepr + fileRepr + rankRepr;
+                const fileRepr = this._fileToHuman(move.toCoords.file);
+                const rankRepr = this._rankToHuman(move.toCoords.rank);
+                
+
+                return move.pieceSymbol + specifyRepr + captureRepr + fileRepr + rankRepr;
+
             case ECastling.KING_SIDE:
                 return 'O-O';
+
             case ECastling.QUEEN_SIDE:
                 return 'O-O-O';
         }
@@ -92,7 +104,7 @@ export class GameRepresentationManager {
         for(let i = 0; i < len; i++) {
             if(i % 2 === 0) 
                 repr += (i / 2 + 1).toString() + '. ';
-            repr += this._toHumanRepresentationOneMove(playedMoves[i]);
+            repr += this._toHumanRepresentationOneMove(board, playedMoves[i]);
             repr += i % 2 === 0 ? '\t\t' : '\n';
         }
         return repr;
@@ -125,5 +137,25 @@ export class GameRepresentationManager {
       }
 
       return playedMoves;
+    }
+
+    /** Converts human rank to computer rank */
+    private _rankFromHuman(human: string): number {
+        return 8 - +human;
+    }
+
+    /** Converts human rank to computer rank */
+    private _fileFromHuman(human: string): number {
+        return human.charCodeAt(0) - 97;
+    }
+
+    /** Converts human rank to computer rank */
+    private _rankToHuman(computer: number): string {
+        return (8 - computer).toString();
+    }
+
+    /** Converts human rank to computer rank */
+    private _fileToHuman(computer: number): string {
+        return String.fromCharCode(computer + 97);
     }
   }
