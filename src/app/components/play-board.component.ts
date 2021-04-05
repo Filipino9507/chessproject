@@ -395,13 +395,14 @@ export class PlayBoardComponent implements OnInit {
     /** Loads game */
     public loadGame(target: HTMLInputElement): void {
         this.gameRepresentationManager.readFile(target, (result: any) => {
-            const moveList = this.gameRepresentationManager.fromHumanRepresentation(result);
+            const moveList = this.gameRepresentationManager.fromHumanRepresentation(this.board, result);
             // const moveList = this.gameRepresentationManager.toMoveList(result);
             if(moveList && this.board.loadGame(moveList)) {
                 this._initializeFields();
                 this._activePlayerColor = moveList.length % 2;
-            } else
-                alert('Failed loading game.')
+            } else {
+                alert('Failed loading game.');
+            }
             target.value = '';
             this._updateState();
         });

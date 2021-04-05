@@ -36,8 +36,8 @@ export class King extends Piece {
             return []; 
         let moves: ICoordinates[] = [];
         for(const coords of [
-            {rank: fromCoords.rank, file: 0}, 
-            {rank: fromCoords.rank, file: BOARD_DIMEN-1}
+            { rank: fromCoords.rank, file: 0 }, 
+            { rank: fromCoords.rank, file: BOARD_DIMEN - 1 }
         ]) {
             const maybeRook = board.getTile(coords).piece;
             if(maybeRook == null || !(maybeRook instanceof Rook) || maybeRook.hasMoved)
@@ -45,7 +45,7 @@ export class King extends Piece {
             const direction = Math.sign(coords.file - fromCoords.file);
             const betweenCoords = addCoordinates(fromCoords, {rank: 0, file: direction});
             const destinationCoords = addCoordinates(
-                fromCoords, {rank: 0, file: 2 * direction}
+                fromCoords, { rank: 0, file: 2 * direction }
             );
 
             const needToBeEmpty = [betweenCoords];
@@ -86,12 +86,12 @@ export class King extends Piece {
         const dFile = toCoords.file - fromCoords.file;
         if(Math.abs(dFile) === 2) {
             if(dFile > 0) {
-                const rook = board.getTile(addCoordinates(fromCoords, {rank: 0, file: 3})).piece;
-                rook.move(board, addCoordinates(fromCoords, {rank: 0, file: 1}), false);
+                const rook = board.getTile(addCoordinates(fromCoords, { rank: 0, file: 3 })).piece;
+                rook.move(board, addCoordinates(fromCoords, { rank: 0, file: 1 }), false);
                 return ECastling.KING_SIDE;
             } else {
-                const rook = board.getTile(addCoordinates(fromCoords, {rank: 0, file: -4})).piece;
-                rook.move(board, addCoordinates(fromCoords, {rank: 0, file: -1}), false);
+                const rook = board.getTile(addCoordinates(fromCoords, { rank: 0, file: -4 })).piece;
+                rook.move(board, addCoordinates(fromCoords, { rank: 0, file: -1 }), false);
                 return ECastling.QUEEN_SIDE;
             }
         }

@@ -30,10 +30,7 @@ export class Board implements IBoard {
 
     /** Constructor */
     constructor() {
-        this._initializeTileArray();
-        this.updateThreatMoves();
-        this._moveCount = 0;
-        this._playedMoves = [];
+        this.reset();
     }
 
     /** Initializes the _tileArray with the starting pieces */
@@ -69,6 +66,14 @@ export class Board implements IBoard {
         }
     }
 
+    /** Resets baord */
+    public reset(): void {
+        this._initializeTileArray();
+        this.updateThreatMoves();
+        this._moveCount = 0;
+        this._playedMoves = [];
+    }
+
     /** Takes one move back */
     public takeMoveBack(): void {
         this._playedMoves.pop();
@@ -77,11 +82,8 @@ export class Board implements IBoard {
 
     /** Loads game from a string of moves */
     public loadGame(moveList: IMove[]): boolean {
-        this._initializeTileArray();
-        this.updateThreatMoves();
-        this._moveCount = 0;
-        this._playedMoves = [];
-        for(const {fromCoords, toCoords} of moveList) {
+        this.reset();
+        for(const { fromCoords, toCoords } of moveList) {
             if(!areCoordinatesValid(fromCoords) || !areCoordinatesValid(toCoords))
                 return false;
             const piece = this.getTile(fromCoords).piece;

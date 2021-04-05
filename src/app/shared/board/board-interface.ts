@@ -6,6 +6,7 @@ export interface IBoard {
     moveCount: number;
     playedMoves: IMove[];
     tileArray: ITile[][];
+    reset(): void;
     getTile(coords: ICoordinates): ITile;
     accessibleByKing(coords: ICoordinates, kingColor: PieceColor): boolean;
     isKingSafe(kingColor: PieceColor): boolean;
