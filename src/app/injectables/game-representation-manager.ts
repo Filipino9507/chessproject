@@ -129,9 +129,11 @@ export class GameRepresentationManager {
             return mv;
         }
     }
+
     /** Converts the human representation of a regular move into the move object and performs the move */
     private _fromHumanRepresentationOneMoveRegular(board: IBoard, representation: string): IMove {
         representation = representation.replace('x', '').trim();
+        console.log('HERE YOU GO: ', representation, representation.length);
         const len = representation.length;
         const toCoords =  {
             file: this._fileFromHuman(representation[len - 2]),
@@ -180,6 +182,7 @@ export class GameRepresentationManager {
 
     /** Converts the human representation of one move into the move object and performs the move */
     private _fromHumanRepresentationOneMove(board: IBoard, representation: string, player: PieceColor): IMove {
+        representation = representation.trim();
         switch(representation[0]) {
             case 'O':
                 return this._fromHumanRepresentationOneMoveCastling(board, representation, player);
@@ -191,8 +194,8 @@ export class GameRepresentationManager {
     /** Converts the human representation to a list of moves */
     public fromHumanRepresentation(board: IBoard, representation: string): IMove[] {
         board.reset();
-        representation = representation.replace('\n', '');
-        const splitRepresentation = representation.split(/\d\. /).slice(1);
+        representation = '\n' + representation;
+        const splitRepresentation = representation.split(/\n\d+\. /).slice(1);
         console.log(splitRepresentation);
 
         let playedMoves = [];
