@@ -96,7 +96,6 @@ export abstract class Piece {
                     ++numberOfOtherPieces;
                     const otherPieceCoords = otherPiece.tile.coords;
                     const otherPieceMoves = otherPiece._generateMoves(board, otherPieceCoords);
-                    
                     for(const move of otherPieceMoves) {
                         if(areCoordinatesEqual(move, toCoords)) {
                             if(myCoords.rank !== otherPieceCoords.rank)

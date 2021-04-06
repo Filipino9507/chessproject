@@ -207,11 +207,9 @@ export class GameRepresentationManager {
                     playedMoves.push(
                         this._fromHumanRepresentationOneMove(board, moveRepr, i % 2)
                     );
-                    console.log(moveRepr);
                 }
             }
         }
-        console.log('PLAYED MOVES: ', playedMoves);
         return playedMoves;
     }
 
