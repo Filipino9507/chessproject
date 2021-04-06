@@ -133,7 +133,6 @@ export class GameRepresentationManager {
     /** Converts the human representation of a regular move into the move object and performs the move */
     private _fromHumanRepresentationOneMoveRegular(board: IBoard, representation: string): IMove {
         representation = representation.replace('x', '').trim();
-        console.log('HERE YOU GO: ', representation, representation.length);
         const len = representation.length;
         const toCoords =  {
             file: this._fileFromHuman(representation[len - 2]),
@@ -196,8 +195,6 @@ export class GameRepresentationManager {
         board.reset();
         representation = '\n' + representation;
         const splitRepresentation = representation.split(/\n\d+\. /).slice(1);
-        console.log(splitRepresentation);
-
         let playedMoves = [];
         for(const pairRepr of splitRepresentation) {
             const twoReprs = pairRepr.split('\t\t');

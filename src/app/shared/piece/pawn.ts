@@ -98,18 +98,6 @@ export class Pawn extends Piece {
     }
 
     /** Override */
-    // public move(board: IBoard, toCoords: ICoordinates, specifyPosition: boolean): IMove {
-    //     this._markFirstRowMove(board, toCoords);
-    //     const enPassant = this._attemptEnPassant(board, toCoords);
-    //     const mv = super.move(board, toCoords, specifyPosition);
-    //     if(enPassant) {
-    //         mv.capture = true;
-    //     }
-    //     this._attemptPromotion(toCoords);
-    //     return mv;
-    // }
-
-    /** Override */
     public move(board: IBoard, toCoords: ICoordinates, specifyPosition: boolean): IMove {
         this._markFirstRowMove(board, toCoords);
         const mv = super.move(board, toCoords, specifyPosition);
@@ -126,21 +114,6 @@ export class Pawn extends Piece {
         if(Math.abs(this._tile.coords.rank - toCoords.rank) === 2)
             this.firstRowMoveNumber = board.moveCount;
     }
-
-    /** Attempts en passant */
-    // private _attemptEnPassant(board: IBoard, toCoords: ICoordinates): boolean {
-    //     const fromCoords = this._tile.coords;
-    //     const isCapture = board.getTile(toCoords).piece != null;
-    //     if(!isCapture) {
-    //         const dRank = fromCoords.rank - toCoords.rank;
-    //         const dFile = fromCoords.file - toCoords.file;
-    //         if(Math.abs(dRank) === 1 && Math.abs(dFile) === 1) {
-    //             board.getTile(addCoordinates(toCoords, { rank: dRank, file: 0 })).piece = null;
-    //             return true;
-    //         }                
-    //     }
-    //     return false;   
-    // }
 
     /** Attempts en passant */
     private _attemptEnPassant(board: IBoard, move: IMove): boolean {
