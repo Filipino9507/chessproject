@@ -38,39 +38,6 @@ export class GameRepresentationManager {
         }
     }
 
-    // /** Converts a list of moves into a representation that gets then saved */
-    // public toRepresentation(moveList: IMove[]): string {
-    //     let representation = '';
-    //     const len = moveList.length;
-    //     for(let i = 0; i < len; i++) {
-    //         const move = moveList[i];
-    //         let moveRepr = move.fromCoords.rank.toString() + move.fromCoords.file.toString()
-    //             + move.toCoords.rank.toString() + move.toCoords.file.toString();
-    //         if(i !== len - 1)
-    //             moveRepr += ';';
-    //         representation += moveRepr;
-    //     }
-    //     return representation;
-    // }
-
-    // /** Converts the saved game representation back into a list of moves */
-    // public toMoveList(representation: string): IMove[] {
-    //     if(representation.length === 0)
-    //         return [];
-    //     const moveList = [];
-    //     const moveReprList = representation.replace(/\s+/g, '').split(';');
-    //     for(const moveRepr of moveReprList) {
-    //         if(moveRepr.length !== 4)
-    //             return null;
-    //         const [fRank, fFile, tRank, tFile] = moveRepr.split('')
-    //             .map(c => parseInt(c));
-    //         const fromCoords = {rank: fRank, file: fFile};
-    //         const toCoords = {rank: tRank, file: tFile};
-    //         moveList.push({fromCoords, toCoords});
-    //     }
-    //     return moveList;
-    // }
-
     /** Gets the human readable representation of one move */
     private _toHumanRepresentationOneMove(move: IMove): string {
         switch(move.castling) {
@@ -85,8 +52,6 @@ export class GameRepresentationManager {
                 const captureRepr = move.capture ? 'x' : '';
                 const fileRepr = this._fileToHuman(move.toCoords.file);
                 const rankRepr = this._rankToHuman(move.toCoords.rank);
-                
-
                 return move.pieceSymbol + specifyRepr + captureRepr + fileRepr + rankRepr;
 
             case ECastling.KING_SIDE:
@@ -197,7 +162,7 @@ export class GameRepresentationManager {
         const splitRepresentation = representation.split(/\n\d+\. /).slice(1);
         let playedMoves = [];
         for(const pairRepr of splitRepresentation) {
-            const twoReprs = pairRepr.split('\t\t');
+            const twoReprs = pairRepr.split(/\s+/);
             for(let i = 0; i < twoReprs.length; ++i) {
                 const moveRepr = twoReprs[i];
                 if(moveRepr.length !== 0) {

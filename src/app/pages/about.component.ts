@@ -13,6 +13,8 @@ import { Component, OnInit } from '@angular/core';
             <li>play chess against a friend on the same machine</li>
             <li>save and load games</li>
         </ul>
+
+        <p>This Chess app was created as part of the 2021 Maturita exam by Filip Dilmaghani.</p>
     `,
     styles: [
     ]

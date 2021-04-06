@@ -396,7 +396,6 @@ export class PlayBoardComponent implements OnInit {
     public loadGame(target: HTMLInputElement): void {
         this.gameRepresentationManager.readFile(target, (result: any) => {
             const moveList = this.gameRepresentationManager.fromHumanRepresentation(this.board, result);
-            // const moveList = this.gameRepresentationManager.toMoveList(result);
             if(moveList && this.board.loadGame(moveList)) {
                 this._initializeFields();
                 this._activePlayerColor = moveList.length % 2;
@@ -411,7 +410,6 @@ export class PlayBoardComponent implements OnInit {
     /** Saves game */
     public saveGame(): void {
         const representation = this.gameRepresentationManager.toHumanRepresentation(this.board);
-        // const representation = this.gameRepresentationManager.toRepresentation(this.board.playedMoves);
         this.gameRepresentationManager.writeFile(representation, 'game.txt');
     }
 
