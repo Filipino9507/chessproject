@@ -22,8 +22,8 @@ export class GameRepresentationManager {
     /** Writes to file */
     public writeFile(data: string, filename: string): void {
         const file = new Blob([data]);
-        if(window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(file, filename);
+        if((window.navigator as any).msSaveOrOpenBlob) {
+            (window.navigator as any).msSaveOrOpenBlob(file, filename);
         } else {
             const a = document.createElement('a');
             const url = URL.createObjectURL(file);
